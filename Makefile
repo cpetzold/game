@@ -9,7 +9,7 @@ all: swf run
 
 swf:
 	@ echo "Compiling..."
-	$(MXMLC) $(FLAGS) -o $(SWF) Main.as
+	$(MXMLC) $(FLAGS) -o $(SWF) ./src/Main.as
 
 run:
 	@ echo "Running..."
