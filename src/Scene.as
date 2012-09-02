@@ -19,7 +19,6 @@ package {
       this.mario = new Sprite2D(texture);
 
 
-
       this.addChild(this.mario);
 
 //Animation Code
@@ -28,10 +27,19 @@ package {
       this.mario.spriteSheet.playAnimation("RUN"); //play duh.
 
 //Animation Code - ENDS
-      this.mario.x = 200;
-      this.mario.y = 200;
+      this.mario.x = Math.floor(Math.random() * 1000);
+      this.mario.y = Math.floor(Math.random() * 300);
+
+
 
     }
+    //STEP - Movement
+    override protected function step(elapsed:Number):void {
+
+      super.step(elapsed);
+      this.mario.x -=1;
+    }
+    //STEP - Movement END
 
   }
 
