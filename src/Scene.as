@@ -12,7 +12,10 @@ package {
 
       this.player = new Player();
       this.player.x = 400;
-      this.player.y = 100;
+      this.player.y = 300;
+
+      this.player.vx = 20;
+      this.player.vy = -100;
 
       this.addChild(this.player);
     }

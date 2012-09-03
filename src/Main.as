@@ -13,7 +13,7 @@ package {
   import de.nulldesign.nd2d.display.World2D;
   import de.nulldesign.nd2d.display.Scene2D;
 
-  import Scene;
+  import Level;
 
   [SWF(width="800", height="600", frameRate="60", backgroundColor="#000000")]
   public class Main extends World2D {
@@ -32,10 +32,10 @@ package {
       
       this.addChild(stats);
       this.addChild(DConsole.view);
-      //DConsole.show();
+      DConsole.show();
 
-      var currentScene:Scene2D = new Scene();
-      this.setActiveScene(currentScene);
+      var currentLevel:Level = new Level('map');
+      this.setActiveScene(currentLevel);
 
       this.start();
     }

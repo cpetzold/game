@@ -14,8 +14,8 @@ package {
 
     public var ax:Number = 0.0; // X Acceleration
     public var ay:Number = 0.0; // Y Acceleration
-    public var dampx:Number = 0.98; // X Damping
-    public var dampy:Number = 0.98; // Y Damping
+    public var dampx:Number = 1; // X Damping
+    public var dampy:Number = 1; // Y Damping
 
     public function DynamicSprite(texture:Texture2D = null) {
       super(texture);
@@ -30,8 +30,11 @@ package {
       DConsole.print('Vel: ' + this.vx + ' x ' + this.vy);
       //DConsole.print('Pos: ' + this.x + ' x ' + this.y);
 
-      this.vx += this.ax * this.dampx * dt;
-      this.vy += this.ay * this.dampy * dt;
+      this.vx += this.ax;
+      this.vy += this.ay;
+
+      this.vx *= this.dampx;
+      this.vy *= this.dampy;
 
       this.x += (this.vx * dt);
       this.y += (this.vy * dt);
