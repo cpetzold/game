@@ -15,28 +15,34 @@ package {
 
   import Level;
 
-  [SWF(width="800", height="600", frameRate="60", backgroundColor="#000000")]
-  public class Main extends World2D {
+  [SWF(width="800", height="600", frameRate="60", backgroundColor="#222222")]
+  public class Game extends World2D {
+
+    protected var currentLevel:Level;
 
     public static var stats:Stats = new Stats();
     
-    public function Main() {
+    public function Game() {
       this.stage.scaleMode = StageScaleMode.NO_SCALE;
       this.stage.align = StageAlign.TOP_LEFT;
       
       super(Context3DRenderMode.AUTO, 60);
     }
     
-    override protected function addedToStage(event:Event):void {
-      super.addedToStage(event);
+    override protected function addedToStage(e:Event):void {
+      super.addedToStage(e);
       
       this.addChild(stats);
       this.addChild(DConsole.view);
-      DConsole.show();
+      //DConsole.show();
 
-      var currentLevel:Level = new Level('map');
-      this.setActiveScene(currentLevel);
+      this.currentLevel = new Level('map2');
+      this.setActiveScene(this.currentLevel);
+      currentLevel.events.addEventListener('init', this.onLevelInit);
+    }
 
+    protected function onLevelInit(e:Event):void {
+      this.addChild(this.currentLevel.player.boundsSprite);
       this.start();
     }
 

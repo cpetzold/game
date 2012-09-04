@@ -1,9 +1,8 @@
 package {
 
-  import de.nulldesign.nd2d.materials.texture.Texture2D;
-  import de.nulldesign.nd2d.display.Sprite2D;
+  import DynamicSprite;
 
-  public class Tile extends Sprite2D {
+  public class Tile extends DynamicSprite {
 
     protected var _frame:uint;
 
@@ -17,6 +16,9 @@ package {
 
     public function get frame():uint {
       return this._frame;
+    }
+
+    override protected function step(dt:Number):void {
     }
 
   }

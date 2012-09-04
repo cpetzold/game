@@ -1,44 +1,40 @@
 package {
 
-  import flash.events.Event;
+  import flash.events.*;
   import flash.display.BitmapData;
   import flash.display.Bitmap;
   import flash.net.URLLoader;
   import flash.net.URLRequest;
-  import flash.utils.ByteArray;
 
   import net.pixelpracht.tmx.*;
-
   import de.nulldesign.nd2d.display.*;
   import de.nulldesign.nd2d.materials.texture.*
 
   import com.furusystems.dconsole2.DConsole;
 
-  import Tile;
+  import Map;
+  import Player;
 
   public class Level extends Scene2D {
 
     protected var tmx:TmxMap;
+    public var map:Map;
+    public var player:Player;
 
-    protected var tileSize:uint;
+    public var events:EventDispatcher;
 
-    public var tiles:Sprite2DBatch;
-
-    [Embed(source='../data/tiles.png')]
-    protected var tilesetBMP:Class;
-
-    public function Level(name:String, tileSize:uint = 32) {
-      this.tileSize = 32;
-      this.load(name);
+    public function Level(name:String) {
+      this.events = new EventDispatcher();
+      this.loadMap(name);
     }
 
-    private function load(name:String):void {
+    private function loadMap(name:String):void {
       var loader:URLLoader = new URLLoader();
-      loader.addEventListener(Event.COMPLETE, this.onLoad);
+      loader.addEventListener(Event.COMPLETE, this.onLoadMap);
       loader.load(new URLRequest('../data/' + name + '.tmx'));
     }
 
-    private function onLoad(e:Event):void {
+    private function onLoadMap(e:Event):void {
       var xml:XML = new XML(e.target.data);
 
       this.tmx = new TmxMap(xml);
@@ -46,41 +42,28 @@ package {
     }
 
     private function init():void {
-      this.createMap();
+      this.map = new Map(this.tmx.getLayer('map'));
+      this.map.x = 16;
+      this.map.y = 300;
+
+      this.player = new Player();
+      this.player.x = 400;
+      this.player.y = 200;
+      this.player.vx = 50;
+
+      this.addChild(this.map);
+      this.addChild(this.player);
+
+      this.events.dispatchEvent(new Event('init'));
     }
 
-    private function createMap():void {
-      var map:TmxLayer = this.tmx.getLayer('map');
-      //var tileset:TmxTileSet = this.tmx.getTileSet('tiles');
+    override protected function step(dt:Number):void {
+      //this.player.ay = 20;
 
-      var tilesetTex:Texture2D = Texture2D.textureFromBitmapData(new tilesetBMP().bitmapData);
-      var tilesetSheet:SpriteSheet = new SpriteSheet(tilesetTex.bitmapWidth, tilesetTex.bitmapHeight, this.tileSize, this.tileSize, 60);
-      
-      this.tiles = new Sprite2DBatch(tilesetTex);
-      this.tiles.setSpriteSheet(tilesetSheet);
+      //DConsole.print(this.player.bounds.toString());
 
-      // Create map tiles
-      var tileIndex:int;
-      var tile:Tile;
-
-      for (var y:int = 0; y < map.tileGIDs.length; y++) {
-        for (var x:int = 0; x < map.tileGIDs[y].length; x++) {
-          tileIndex = map.tileGIDs[y][x];
-
-          tile = new Tile();
-          tile.x = x * this.tileSize;
-          tile.y = y * this.tileSize;
-          this.tiles.addChild(tile);
-          tile.frame = tileIndex - 1;
-        }
-      }
-
-      this.tiles.x = 100;
-      this.tiles.y = 100;
-      this.addChild(this.tiles);
-
+      super.step(dt);
     }
-
 
   }
 
