@@ -49,18 +49,19 @@ package {
       this.player = new Player();
       this.player.x = 400;
       this.player.y = 200;
-      this.player.vx = 50;
 
       this.addChild(this.map);
       this.addChild(this.player);
 
       this.events.dispatchEvent(new Event('init'));
+      //this.camera.zoom = 2;
     }
 
     override protected function step(dt:Number):void {
-      //this.player.ay = 20;
+      //this.player.collideMap(this.map);
 
-      //DConsole.print(this.player.bounds.toString());
+      this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
+      this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
 
       super.step(dt);
     }

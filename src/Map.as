@@ -16,14 +16,15 @@ package {
   public class Map extends Sprite2DBatch {
 
     public var tileSize:uint;
-    public var collisionMap:Array;
+
+    public var tiles:Array;
 
     [Embed(source='../data/tiles.png')]
     protected var tilesetBMP:Class;
 
     public function Map(tmx:TmxLayer, tileSize:uint = 32) {
       this.tileSize = tileSize;
-      this.collisionMap = [];
+      this.tiles = [];
 
       var tilesetTex:Texture2D = Texture2D.textureFromBitmapData(new tilesetBMP().bitmapData);
       var tilesetSheet:SpriteSheet = new SpriteSheet(tilesetTex.bitmapWidth, tilesetTex.bitmapHeight, this.tileSize, this.tileSize, 60);
@@ -39,7 +40,7 @@ package {
       var tile:Tile;
 
       for (var y:int = 0; y < tileGIDs.length; y++) {
-        this.collisionMap[y] = [];
+        this.tiles[y] = [];
         for (var x:int = 0; x < tileGIDs[y].length; x++) {
           tileIndex = tileGIDs[y][x];
 
@@ -51,9 +52,7 @@ package {
             this.addChild(tile);
             tile.frame = tileIndex - 1;
 
-            this.collisionMap[y][x] = 1;
-          } else {
-            this.collisionMap[y][x] = 0;
+            this.tiles[y][x] = tile;
           }
         }
       }

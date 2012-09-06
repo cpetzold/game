@@ -25,7 +25,8 @@ package {
     public function Game() {
       this.stage.scaleMode = StageScaleMode.NO_SCALE;
       this.stage.align = StageAlign.TOP_LEFT;
-      
+
+      Input.initialize(this.stage);
       super(Context3DRenderMode.AUTO, 60);
     }
     
@@ -42,7 +43,6 @@ package {
     }
 
     protected function onLevelInit(e:Event):void {
-      this.addChild(this.currentLevel.player.boundsSprite);
       this.start();
     }
 

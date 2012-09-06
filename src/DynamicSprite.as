@@ -19,8 +19,10 @@ package {
 
     public var ax:Number = 0.0; // X Acceleration
     public var ay:Number = 0.0; // Y Acceleration
-    public var dampx:Number = 1; // X Damping
-    public var dampy:Number = 1; // Y Damping
+    public var dampx:Number = 0.99; // X Damping
+    public var dampy:Number = 0.99; // Y Damping
+
+    public var debug:Boolean = false;
 
     public function DynamicSprite(texture:Texture2D = null) {
       super(texture);
@@ -40,6 +42,22 @@ package {
       return new Rectangle(sprite.x - (sprite.width / 2), sprite.y - (sprite.height / 2), sprite.width, sprite.height);
     }
 
+    public function get movingLeft():Boolean {
+      return this.vx < 0;
+    }
+
+    public function get movingRight():Boolean {
+      return this.vx > 0;
+    }
+
+    public function get movingUp():Boolean {
+      return this.vy < 0;
+    }
+
+    public function get movingDown():Boolean {
+      return this.vy > 0;
+    }
+
     override protected function step(dt:Number):void {
       this.vx += this.ax;
       this.vy += this.ay;
@@ -52,9 +70,15 @@ package {
 
       this.ax = this.ay = 0.0;
 
-      var bounds:Rectangle = this.bounds;
-      DConsole.print(bounds.toString());
+      if (this.debug) {
+        this.debugStep(dt);
+      }
 
+      super.step(dt);
+    }
+
+    private function debugStep(dt:Number):void {
+      var bounds:Rectangle = this.bounds;
       if (bounds.width) {
         this.boundsSprite.x = bounds.x;
         this.boundsSprite.y = bounds.y;
@@ -62,8 +86,6 @@ package {
         this.boundsSprite.graphics.lineStyle(1, 0xff0000);
         this.boundsSprite.graphics.drawRect(0, 0, bounds.width, bounds.height);
       }
-
-      super.step(dt);
     }
 
   }
