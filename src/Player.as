@@ -22,7 +22,8 @@ package {
       //this.spriteSheet.addAnimation('run', [0, 1, 2, 3, 2, 1], true);
       //this.spriteSheet.playAnimation('run');
 
-      this.damp = new Vec2(0.9, 0.9);
+      this.grav = new Vec2(0, 20);
+      this.damp = new Vec2(0.9, 0.98]);
       this.speed = 20;
       this.debug = true;
     }
@@ -34,7 +35,7 @@ package {
       var topTile:int = Math.floor((bounds.top - map.y) / map.tileSize);
       var bottomTile:int = Math.ceil((bounds.bottom - map.y) / map.tileSize);
 
-      DConsole.print(leftTile + ':' + rightTile + ':' + topTile + ':' + bottomTile);
+      //DConsole.print(leftTile + ':' + rightTile + ':' + topTile + ':' + bottomTile);
 
       var tile:Tile;
       for (var y:int = topTile; y <= bottomTile; ++y) {
@@ -51,7 +52,13 @@ package {
 
     private function collideTile(tile:Tile):void {
       var intersection:Rectangle = this.bounds.intersection(tile.bounds);
-      DConsole.print(this.bounds.toString() + ' - ' + tile.bounds.toString() + ' - ' + intersection.toString());
+      if (intersection.width && intersection.width < intersection.height) {
+        this.x += (this.movingLeft ? intersection.width : -intersection.width);
+        this.vel.x = 0;
+      } else if (intersection.height) {
+        this.y += (this.movingUp ? intersection.height : -intersection.height);
+        this.vel.y = 0;
+      }
     }
 
     override protected function step(dt:Number):void {
