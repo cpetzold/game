@@ -1,22 +1,18 @@
 package {
-
   import flash.events.Event;
   import flash.display.BitmapData;
   import flash.display.Bitmap;
   import flash.net.URLLoader;
   import flash.net.URLRequest;
-
   import net.pixelpracht.tmx.*;
-
   import de.nulldesign.nd2d.display.*;
   import de.nulldesign.nd2d.materials.texture.*
-
-  import Tile;
 
   public class Map extends Sprite2DBatch {
 
     public var tileSize:uint;
-
+    public var tilesWide:uint;
+    public var tilesHigh:uint;
     public var tiles:Array;
 
     [Embed(source='../data/tiles.png')]
@@ -33,11 +29,22 @@ package {
       this.setSpriteSheet(tilesetSheet);
 
       this.createTiles(tmx.tileGIDs);
+      this.tilesHigh = this.tiles.length;
+      this.tilesWide = this.tiles[0].length;
+    }
+
+    public function getTile(x:int, y:int):Tile {
+      if (x < 0 || y < 0 || x >= this.tilesWide || y >= this.tilesHigh) {
+        return null;
+      } else {
+        return this.tiles[y][x];
+      }
     }
 
     private function createTiles(tileGIDs:Array):void {
       var tileIndex:int;
       var tile:Tile;
+      var halfTileSize:int = this.tileSize / 2;
 
       for (var y:int = 0; y < tileGIDs.length; y++) {
         this.tiles[y] = [];
@@ -46,13 +53,15 @@ package {
 
           if (tileIndex) {
             tile = new Tile();
-            tile.x = x * this.tileSize;
-            tile.y = y * this.tileSize;
+            tile.x = (x * this.tileSize) + halfTileSize;
+            tile.y = (y * this.tileSize) + halfTileSize;
 
             this.addChild(tile);
             tile.frame = tileIndex - 1;
 
             this.tiles[y][x] = tile;
+          } else {
+            this.tiles[y][x] = null;
           }
         }
       }

@@ -1,36 +1,31 @@
 package {
-
   import flash.geom.Rectangle;
   import flash.display.Sprite;
-
-  import de.nulldesign.nd2d.materials.texture.Texture2D;
   import de.nulldesign.nd2d.display.Sprite2D;
-
+  import de.nulldesign.nd2d.materials.texture.Texture2D;
   import com.furusystems.dconsole2.DConsole;
+  import utils.Vec2;
+
+  import Sprite;
 
   /**
-   * DynamicSprite is a Sprite2D with some extra properties
+   * DynamicSprite is a Sprite with some extra properties
    * It adds x/y acceleration and damping, and overrides the step function
    * with something that automatically updates all physical properties.
    */
-  public class DynamicSprite extends Sprite2D {
+  public class DynamicSprite extends Sprite {
 
-    public var boundsSprite:Sprite;
+    public var boundsSprite:flash.display.Sprite;
 
-    public var ax:Number = 0.0; // X Acceleration
-    public var ay:Number = 0.0; // Y Acceleration
-    public var dampx:Number = 0.99; // X Damping
-    public var dampy:Number = 0.99; // Y Damping
-
-    public var debug:Boolean = false;
+    public var acc:Vec2 = new Vec2(); // Acceleration vector
+    public var grav:Vec2 = new Vec2(); // Gravity/wind vector
+    public var vel:Vec2 = new Vec2(); // Velocity vector
+    public var damp:Vec2 = new Vec2(0.97, 0.97); // Damping vector
 
     public function DynamicSprite(texture:Texture2D = null) {
       super(texture);
 
-      this.boundsSprite = new Sprite();
-
-      this.vx = 0.0;
-      this.vy = 0.0;
+      this.boundsSprite = new flash.display.Sprite();
     }
 
     public function get bounds():Rectangle {
@@ -43,37 +38,29 @@ package {
     }
 
     public function get movingLeft():Boolean {
-      return this.vx < 0;
+      return this.vel.x < 0;
     }
 
     public function get movingRight():Boolean {
-      return this.vx > 0;
+      return this.vel.x > 0;
     }
 
     public function get movingUp():Boolean {
-      return this.vy < 0;
+      return this.vel.y < 0;
     }
 
     public function get movingDown():Boolean {
-      return this.vy > 0;
+      return this.vel.y > 0;
     }
 
     override protected function step(dt:Number):void {
-      this.vx += this.ax;
-      this.vy += this.ay;
+      this.vel.addSelf(this.acc).mulSelf(this.damp);
 
-      this.vx *= this.dampx;
-      this.vy *= this.dampy;
+      this.pos = this.vel.scale(dt).add(this.pos);
 
-      this.x += (this.vx * dt);
-      this.y += (this.vy * dt);
+      this.acc = this.grav.clone();
 
-      this.ax = this.ay = 0.0;
-
-      if (this.debug) {
-        this.debugStep(dt);
-      }
-
+      if (this.debug) this.debugStep(dt);
       super.step(dt);
     }
 

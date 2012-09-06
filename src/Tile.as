@@ -1,5 +1,4 @@
 package {
-
   import DynamicSprite;
 
   public class Tile extends DynamicSprite {

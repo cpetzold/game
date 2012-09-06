@@ -15,7 +15,7 @@ package {
 
   import Level;
 
-  [SWF(width="800", height="600", frameRate="60", backgroundColor="#222222")]
+  [SWF(width="1024", height="768", frameRate="60", backgroundColor="#333333")]
   public class Game extends World2D {
 
     protected var currentLevel:Level;

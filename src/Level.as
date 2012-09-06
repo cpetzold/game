@@ -1,19 +1,13 @@
 package {
-
   import flash.events.*;
   import flash.display.BitmapData;
   import flash.display.Bitmap;
   import flash.net.URLLoader;
   import flash.net.URLRequest;
-
   import net.pixelpracht.tmx.*;
   import de.nulldesign.nd2d.display.*;
   import de.nulldesign.nd2d.materials.texture.*
-
   import com.furusystems.dconsole2.DConsole;
-
-  import Map;
-  import Player;
 
   public class Level extends Scene2D {
 
@@ -43,8 +37,6 @@ package {
 
     private function init():void {
       this.map = new Map(this.tmx.getLayer('map'));
-      this.map.x = 16;
-      this.map.y = 300;
 
       this.player = new Player();
       this.player.x = 400;
@@ -58,10 +50,10 @@ package {
     }
 
     override protected function step(dt:Number):void {
-      //this.player.collideMap(this.map);
+      this.player.collideMap(this.map);
 
-      this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
-      this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
+      //this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
+      //this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
 
       super.step(dt);
     }
