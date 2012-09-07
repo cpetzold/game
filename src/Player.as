@@ -23,7 +23,7 @@ package {
       //this.spriteSheet.playAnimation('run');
 
       this.grav = new Vec2(0, 20);
-      this.damp = new Vec2(0.9, 0.98]);
+      this.damp = new Vec2(0.9, 0.98);
       this.speed = 20;
       this.debug = true;
     }
