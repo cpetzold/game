@@ -16,6 +16,8 @@ package {
     public var map:Map;
     public var hit:Rectangle; // X / Y offset from self
 
+    public var grounded:Boolean = false; // True when on the ground
+
     public var acc:Vec2 = new Vec2(); // Acceleration vector
     public var grav:Vec2 = new Vec2(); // Gravity/wind vector
     public var vel:Vec2 = new Vec2(); // Velocity vector
@@ -48,34 +50,23 @@ package {
       return this.vel.y > 0;
     }
 
-    protected function landed():void {}
-    protected function roof():void {}
-    protected function falling():void {}
-
     override protected function step(dt:Number):void {
       this.vel.addSelf(this.acc.scale(dt));
       this.vel.subSelf(this.vel.mulSelf(this.damp).scale(dt));
 
       this.y += this.vel.y * dt;
-      if (this.map) this.collideMapY();
+      if (this.map) {
+        this.grounded = false;
+        this.collideMapY();
+      }
 
       this.x += this.vel.x * dt;
-      if (this.map) this.collideMapX();
+      if (this.map) {
+        this.collideMapX();
+      }
 
       this.acc = this.grav.clone();
       super.step(dt);
-    }
-
-    public function collideMapOffsets():Array {
-      var bounds:Rectangle = this.bounds
-        , tiles:Array = this.map.getCollisionTiles(bounds)
-        , offsets:Array = [];
-
-      for (var i:int = 0; i < tiles.length; i++) {
-        offsets[i] = tiles[i] ? bounds.intersection(tiles[i].bounds) : null;
-      }
-
-      return offsets;
     }
 
     public function collideMapX():void {
@@ -135,6 +126,24 @@ package {
           this.falling();
         }
       }
+    }
+
+    protected function landed():void {
+      this.grounded = true;
+    }
+    protected function roof():void {}
+    protected function falling():void {}
+
+    public function collideMapOffsets():Array {
+      var bounds:Rectangle = this.bounds
+        , tiles:Array = this.map.getCollisionTiles(bounds)
+        , offsets:Array = [];
+
+      for (var i:int = 0; i < tiles.length; i++) {
+        offsets[i] = tiles[i] ? bounds.intersection(tiles[i].bounds) : null;
+      }
+
+      return offsets;
     }
 
   }

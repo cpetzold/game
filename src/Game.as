@@ -26,7 +26,7 @@ package {
       this.stage.scaleMode = StageScaleMode.NO_SCALE;
       this.stage.align = StageAlign.TOP_LEFT;
 
-      Input.initialize(this.stage);
+      Input.initialize(this.stage, false);
       super(Context3DRenderMode.AUTO, 60);
     }
     
@@ -49,6 +49,7 @@ package {
     override protected function mainLoop(e:Event):void {
       super.mainLoop(e);
       stats.update(statsObject.totalDrawCalls, statsObject.totalTris);
+      Input.clear();
     }
     
   }
