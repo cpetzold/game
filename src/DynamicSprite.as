@@ -48,9 +48,9 @@ package {
       return this.vel.y > 0;
     }
 
-    private function landed():void {}
-    private function roof():void {}
-    private function falling():void {}
+    protected function landed():void {}
+    protected function roof():void {}
+    protected function falling():void {}
 
     override protected function step(dt:Number):void {
       this.vel.addSelf(this.acc.scale(dt));
