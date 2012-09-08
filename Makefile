@@ -10,7 +10,7 @@ all: swf run
 swf:
 	@ echo "Compiling..."
 	$(MXMLC) $(FLAGS) -o $(SWF) ./src/Game.as
-	cp -R ./data ./build/data
+	#cp -R ./data ./build/data
 
 run:
 	@ echo "Running..."
