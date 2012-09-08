@@ -13,6 +13,7 @@ package {
    */
   public class DynamicSprite extends Sprite {
 
+    public var map:Map;
     public var hit:Rectangle; // X / Y offset from self
 
     public var acc:Vec2 = new Vec2(); // Acceleration vector
@@ -47,14 +48,93 @@ package {
       return this.vel.y > 0;
     }
 
-    override protected function step(dt:Number):void {
-      this.vel.addSelf(this.acc).mulSelf(this.damp);
+    private function landed():void {}
+    private function roof():void {}
+    private function falling():void {}
 
-      this.pos = this.vel.scale(dt).add(this.pos);
+    override protected function step(dt:Number):void {
+      this.vel.addSelf(this.acc.scale(dt));
+      this.vel.subSelf(this.vel.mulSelf(this.damp).scale(dt));
+
+      this.y += this.vel.y * dt;
+      if (this.map) this.collideMapY();
+
+      this.x += this.vel.x * dt;
+      if (this.map) this.collideMapX();
 
       this.acc = this.grav.clone();
-
       super.step(dt);
+    }
+
+    public function collideMapOffsets():Array {
+      var bounds:Rectangle = this.bounds
+        , tiles:Array = this.map.getCollisionTiles(bounds)
+        , offsets:Array = [];
+
+      for (var i:int = 0; i < tiles.length; i++) {
+        offsets[i] = tiles[i] ? bounds.intersection(tiles[i].bounds) : null;
+      }
+
+      return offsets;
+    }
+
+    public function collideMapX():void {
+      var offsets:Array = this.collideMapOffsets()
+        , offset:Number;
+
+      if (this.movingRight) {
+        if (offsets[3] && offsets[3].width) {
+          offset = -offsets[3].width;
+        } else if (offsets[1] && offsets[1].width) {
+          offset = -offsets[1].width;
+        }
+      } else if (this.movingLeft) {
+        if (offsets[2] && offsets[2].width) {
+          offset = offsets[2].width;
+        } else if (offsets[0] && offsets[0].width) {
+          offset = offsets[0].width;
+        }
+      }
+
+      if (offset) {
+        this.vel.x = 0;
+        this.x += offset;
+      }
+    }
+
+    public function collideMapY():void {
+      var offsets:Array = this.collideMapOffsets()
+        , offset:Number;
+
+      if (this.movingDown) {
+        if (offsets[2] && offsets[2].height) {
+          offset = offsets[2].height;
+        } else if (offsets[3] && offsets[3].height) {
+          offset = offsets[3].height;
+        }
+
+        if (offset) {
+          this.vel.y = 0;
+          this.y -= offset;
+          this.landed();
+        }
+      } else if (this.movingUp) {
+        if (offsets[0] && offsets[0].height) {
+          offset = offsets[0].height;
+        } else if (offsets[1] && offsets[1].height) {
+          offset = offsets[1].height;
+        }
+
+        if (offset) {
+          this.vel.y = 0;
+          this.y += offset;
+          this.roof();  
+        }
+      } else {
+        if (!offsets[2] && !offsets[3]) {
+          this.falling();
+        }
+      }
     }
 
   }

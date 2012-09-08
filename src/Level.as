@@ -38,7 +38,7 @@ package {
     private function init():void {
       this.map = new Map(this.tmx.getLayer('map'));
 
-      this.player = new Player();
+      this.player = new Player(this.map);
       this.player.x = 400;
       this.player.y = 200;
 
@@ -54,8 +54,6 @@ package {
 
       //this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
       //this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
-
-      this.player.collideMap(this.map);
     }
 
   }

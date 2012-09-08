@@ -14,7 +14,7 @@ package {
 
     public var speed:int;
 
-    public function Player() {
+    public function Player(map:Map) {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
       super(texture);
 
@@ -36,9 +36,10 @@ package {
 
       this.spriteSheet.playAnimation('idle_r');
 
-      this.grav = new Vec2(0, 0);
+      this.map = map;
+      this.grav = new Vec2(0, 1500);
       this.damp = new Vec2(0.9, 0.98);
-      this.speed = 20;
+      this.speed = 1000;
       this.debug = true;
 
       // Player hitbox
@@ -46,87 +47,6 @@ package {
       // 16 = width / 28 = height
       this.hit = new Rectangle(24, 32, 16, 28);
     }
-
-    public function collideMap(map:Map):void {
-      var bounds:Rectangle = this.bounds
-        , tiles:Array = map.getCollisionTiles(bounds)
-        , offsets:Array = [];
-
-      for (var i:int = 0; i < tiles.length; i++) {
-        offsets[i] = tiles[i] ? bounds.intersection(tiles[i].bounds) : null;
-      }
-
-      //DConsole.print('left: ' + bounds.left + ' - x: ' + this.x + ' - ' + offsets.toString());
-
-      this.collideMapX(offsets);
-      this.collideMapY(offsets);
-
-      //DConsole.print(this.x + 'x' + this.y + ' - ' + this.vel.toString());
-    }
-
-    public function collideMapX(offsets:Array):void {
-      var offset:Number;
-
-      if (this.movingRight) {
-        if (offsets[3] && offsets[3].width) {
-          offset = -offsets[3].width;
-        } else if (offsets[1] && offsets[1].width) {
-          offset = -offsets[1].width;
-        }
-      } else if (this.movingLeft) {
-        if (offsets[2] && offsets[2].width) {
-          offset = offsets[2].width;
-        } else if (offsets[0] && offsets[0].width) {
-          offset = offsets[0].width;
-        }
-      }
-
-      if (offset) {
-        //DConsole.print('OFFSET X: ' + offset.toString());
-        //this.vel.x = 0;
-        this.x += offset;
-      }
-    }
-
-    public function collideMapY(offsets:Array):void {
-      var offset:Number;
-
-      if (this.movingDown) {
-        if (offsets[2] && offsets[2].height) {
-          offset = offsets[2].height;
-        } else if (offsets[3] && offsets[3].height) {
-          offset = offsets[3].height;
-        }
-
-        if (offset) {
-          //DConsole.print(offsets.toString());
-          //this.vel.y = 0;
-          this.y -= offset;
-          this.landed();
-        }
-      } else if (this.movingUp) {
-        if (offsets[0] && offsets[0].height) {
-          offset = offsets[0].height;
-        } else if (offsets[1] && offsets[1].height) {
-          offset = offsets[1].height;
-        }
-
-        if (offset) {
-          //DConsole.print('OFFSET Y (top): ' + offsets.toString());
-          //this.vel.y = 0;
-          this.y += offset;
-          this.roof();  
-        }
-      } else {
-        if (!offsets[2] && !offsets[3]) {
-          this.falling();
-        }
-      }
-    }
-
-    private function landed():void {}
-    private function roof():void {}
-    private function falling():void {}
 
     override protected function step(dt:Number):void {
       var speed:int = this.speed;
