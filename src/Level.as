@@ -50,12 +50,12 @@ package {
     }
 
     override protected function step(dt:Number):void {
-      this.player.collideMap(this.map);
+      super.step(dt);
 
       //this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
       //this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
 
-      super.step(dt);
+      this.player.collideMap(this.map);
     }
 
   }

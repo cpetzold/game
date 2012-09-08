@@ -1,4 +1,5 @@
 package {
+  import flash.geom.Rectangle;
   import flash.events.Event;
   import flash.display.BitmapData;
   import flash.display.Bitmap;
@@ -41,6 +42,24 @@ package {
       }
     }
 
+    public function getTileAt(x:int, y:int):Tile {
+      if (x < 0 || y < 0 ||
+          x > this.tilesWide * this.tileSize ||
+          y > this.tilesHigh * this.tileSize) {
+        return null;
+      } else {
+        return this.getTile(Math.floor(x / this.tileSize),
+                            Math.floor(y / this.tileSize));
+      }
+    }
+
+    public function getCollisionTiles(bounds:Rectangle):Array {
+      return [ this.getTileAt(bounds.left, bounds.top)
+             , this.getTileAt(bounds.right, bounds.top)
+             , this.getTileAt(bounds.left, bounds.bottom)
+             , this.getTileAt(bounds.right, bounds.bottom) ];
+    }
+
     private function createTiles(tileGIDs:Array):void {
       var tileIndex:int;
       var tile:Tile;
@@ -55,6 +74,7 @@ package {
             tile = new Tile();
             tile.x = (x * this.tileSize) + halfTileSize;
             tile.y = (y * this.tileSize) + halfTileSize;
+            tile.hit.width = tile.hit.height = this.tileSize;
 
             this.addChild(tile);
             tile.frame = tileIndex - 1;
@@ -66,7 +86,6 @@ package {
         }
       }
     }
-
 
   }
 }

@@ -1,12 +1,10 @@
 package {
   import flash.geom.Rectangle;
-  import flash.display.Sprite;
   import de.nulldesign.nd2d.display.Sprite2D;
+  import de.nulldesign.nd2d.display.Node2D;
   import de.nulldesign.nd2d.materials.texture.Texture2D;
   import com.furusystems.dconsole2.DConsole;
   import utils.Vec2;
-
-  import Sprite;
 
   /**
    * DynamicSprite is a Sprite with some extra properties
@@ -15,7 +13,7 @@ package {
    */
   public class DynamicSprite extends Sprite {
 
-    public var boundsSprite:flash.display.Sprite;
+    public var hit:Rectangle; // X / Y offset from self
 
     public var acc:Vec2 = new Vec2(); // Acceleration vector
     public var grav:Vec2 = new Vec2(); // Gravity/wind vector
@@ -24,17 +22,13 @@ package {
 
     public function DynamicSprite(texture:Texture2D = null) {
       super(texture);
-
-      this.boundsSprite = new flash.display.Sprite();
+      this.hit = new Rectangle(0, 0, this.width, this.height);
     }
 
     public function get bounds():Rectangle {
-      var sprite:Sprite2D = this;
-      if (this.mask) {
-        sprite = this.mask;
-      }
-
-      return new Rectangle(sprite.x - (sprite.width / 2), sprite.y - (sprite.height / 2), sprite.width, sprite.height);
+      var bounds:Rectangle = this.hit.clone();
+      bounds.offset(this.x - (this.width / 2), this.y - (this.height / 2));
+      return bounds; 
     }
 
     public function get movingLeft():Boolean {
@@ -60,19 +54,7 @@ package {
 
       this.acc = this.grav.clone();
 
-      if (this.debug) this.debugStep(dt);
       super.step(dt);
-    }
-
-    private function debugStep(dt:Number):void {
-      var bounds:Rectangle = this.bounds;
-      if (bounds.width) {
-        this.boundsSprite.x = bounds.x;
-        this.boundsSprite.y = bounds.y;
-        this.boundsSprite.graphics.clear();
-        this.boundsSprite.graphics.lineStyle(1, 0xff0000);
-        this.boundsSprite.graphics.drawRect(0, 0, bounds.width, bounds.height);
-      }
     }
 
   }

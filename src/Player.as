@@ -18,7 +18,7 @@ package {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
       super(texture);
 
-      this.spriteSheet = new SpriteSheet(texture.bitmapWidth, texture.bitmapHeight, 64, 64, 13); //29 = width / 16 = height / 10 = fps
+      this.spriteSheet = new SpriteSheet(texture.bitmapWidth, texture.bitmapHeight, 64, 64, 13); // 64 = width / 64 = height / 13 = fps
       this.spriteSheet.addAnimation('idle_r', [0,1,2,3], true); 
       this.spriteSheet.addAnimation('idle_l', [8,9,10,11], true); 
 
@@ -34,47 +34,99 @@ package {
       this.spriteSheet.addAnimation('fall_r', [73], false); // Frozen on keyframe 2, missing transition
       this.spriteSheet.addAnimation('fall_l', [81], false); //Frozen on keyframe 2, missing transition
 
-
       this.spriteSheet.playAnimation('idle_r');
 
-      this.grav = new Vec2(0, 20);
+      this.grav = new Vec2(0, 0);
       this.damp = new Vec2(0.9, 0.98);
       this.speed = 20;
       this.debug = true;
+
+      // Player hitbox
+      // 8 = x offset from center / 32 = y offset from center
+      // 16 = width / 28 = height
+      this.hit = new Rectangle(24, 32, 16, 28);
     }
 
     public function collideMap(map:Map):void {
-      var bounds:Rectangle = this.bounds;
-      var leftTile:int = Math.floor((bounds.left - map.x) / map.tileSize);
-      var rightTile:int = Math.ceil((bounds.right - map.x) / map.tileSize);
-      var topTile:int = Math.floor((bounds.top - map.y) / map.tileSize);
-      var bottomTile:int = Math.ceil((bounds.bottom - map.y) / map.tileSize);
+      var bounds:Rectangle = this.bounds
+        , tiles:Array = map.getCollisionTiles(bounds)
+        , offsets:Array = [];
 
-      //DConsole.print(leftTile + ':' + rightTile + ':' + topTile + ':' + bottomTile);
+      for (var i:int = 0; i < tiles.length; i++) {
+        offsets[i] = tiles[i] ? bounds.intersection(tiles[i].bounds) : null;
+      }
 
-      var tile:Tile;
-      for (var y:int = topTile; y <= bottomTile; ++y) {
-        for (var x:int = leftTile; x <= rightTile; ++x) {
-          tile = map.getTile(x, y);
+      //DConsole.print('left: ' + bounds.left + ' - x: ' + this.x + ' - ' + offsets.toString());
 
-          if (tile) {
-            this.collideTile(tile);
-          }
+      this.collideMapX(offsets);
+      this.collideMapY(offsets);
+
+      //DConsole.print(this.x + 'x' + this.y + ' - ' + this.vel.toString());
+    }
+
+    public function collideMapX(offsets:Array):void {
+      var offset:Number;
+
+      if (this.movingRight) {
+        if (offsets[3] && offsets[3].width) {
+          offset = -offsets[3].width;
+        } else if (offsets[1] && offsets[1].width) {
+          offset = -offsets[1].width;
+        }
+      } else if (this.movingLeft) {
+        if (offsets[2] && offsets[2].width) {
+          offset = offsets[2].width;
+        } else if (offsets[0] && offsets[0].width) {
+          offset = offsets[0].width;
         }
       }
 
-    }
-
-    private function collideTile(tile:Tile):void {
-      var intersection:Rectangle = this.bounds.intersection(tile.bounds);
-      if (intersection.width && intersection.width < intersection.height) {
-        this.x += (this.movingLeft ? intersection.width : -intersection.width);
-        this.vel.x = 0;
-      } else if (intersection.height) {
-        this.y += (this.movingUp ? intersection.height : -intersection.height);
-        this.vel.y = 0;
+      if (offset) {
+        //DConsole.print('OFFSET X: ' + offset.toString());
+        //this.vel.x = 0;
+        this.x += offset;
       }
     }
+
+    public function collideMapY(offsets:Array):void {
+      var offset:Number;
+
+      if (this.movingDown) {
+        if (offsets[2] && offsets[2].height) {
+          offset = offsets[2].height;
+        } else if (offsets[3] && offsets[3].height) {
+          offset = offsets[3].height;
+        }
+
+        if (offset) {
+          //DConsole.print(offsets.toString());
+          //this.vel.y = 0;
+          this.y -= offset;
+          this.landed();
+        }
+      } else if (this.movingUp) {
+        if (offsets[0] && offsets[0].height) {
+          offset = offsets[0].height;
+        } else if (offsets[1] && offsets[1].height) {
+          offset = offsets[1].height;
+        }
+
+        if (offset) {
+          //DConsole.print('OFFSET Y (top): ' + offsets.toString());
+          //this.vel.y = 0;
+          this.y += offset;
+          this.roof();  
+        }
+      } else {
+        if (!offsets[2] && !offsets[3]) {
+          this.falling();
+        }
+      }
+    }
+
+    private function landed():void {}
+    private function roof():void {}
+    private function falling():void {}
 
     override protected function step(dt:Number):void {
       var speed:int = this.speed;

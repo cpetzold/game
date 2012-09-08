@@ -6,6 +6,7 @@ package {
     protected var _frame:uint;
 
     public function Tile() {
+      super();
     }
 
     public function set frame(value:uint):void {
@@ -15,6 +16,10 @@ package {
 
     public function get frame():uint {
       return this._frame;
+    }
+
+    public function equals(t:Tile):Boolean {
+      return (this.x == t.x && this.y == t.y);
     }
 
     override protected function step(dt:Number):void {
