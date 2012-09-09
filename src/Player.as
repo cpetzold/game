@@ -1,5 +1,7 @@
 package {
   import flash.geom.Rectangle;
+  import flash.events.Event;
+  import flash.utils.Timer;
   import de.nulldesign.nd2d.materials.texture.Texture2D;
   import de.nulldesign.nd2d.display.Sprite2D;
   import com.furusystems.dconsole2.DConsole;
@@ -22,10 +24,15 @@ package {
     public var jumpDamp:Number;
     public var jumpDampRate:Number;
 
+    public var secondJumpForce:Number;
+    public var secondJumpTimer:Timer;
+    public var canSecondJump:Boolean;
+
     public var moving:Boolean;
     public var turning:Boolean;
     public var running:Boolean;
     public var jumping:Boolean;
+    public var secondJumping:Boolean;
 
     public function Player(map:Map) {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
@@ -40,20 +47,31 @@ package {
       this.hit = new Rectangle(24, 32, 16, 28);
 
       this.walkSpeed = 500;
-      this.runSpeed = 3000;
+      this.runSpeed = 1000;
       this.turnDamp = 0.9;
 
-      this.jumpForce = 300;
+      this.jumpForce = 200;
       this.jumpSpeed = 100;
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
+
+      this.secondJumpForce = 400;
+      this.secondJumpTimer = new Timer(100);
+      this.secondJumpTimer.addEventListener('timer', this.secondJumpMiss);
+      this.canSecondJump = false;
 
       this.moving = false;
       this.turning = false;
       this.running = false;
       this.jumping = false;
+      this.secondJumping = false;
 
       this.debug = true;
+    }
+
+    protected function playAnimation(name:String, fps:uint):void {
+      if (fps) this.ss.setFps(fps);
+      this.ss.playAnimation(name);
     }
 
     private function addAnimations():void {
@@ -71,6 +89,8 @@ package {
     }
 
     override protected function step(dt:Number):void {
+      var avx:Number = Math.abs(this.vel.x);
+
       this.moving = false;
       this.running = Input.kd('SHIFT');
 
@@ -91,41 +111,27 @@ package {
       }
 
       if (!this.moving || this.turning) {
-        this.vel.x *= this.turnDamp;
-        if (Math.abs(this.vel.x) < 30) { vel.x = 0; }
+        this.vel.x *= (avx > 30) ? this.turnDamp : 0;
       }
 
       if (this.grounded) {
-        if (Math.abs(this.vel.x) > 5) {
-
+        if (avx > 5) {
           if (!this.moving || this.turning) {
-
-          
-          if (moving == false){
-              if (Math.abs(this.vel.x) >120) { this.playAnimation('slide', 20); }  else {
-
-                if (Math.abs(this.vel.x) <30) { this.playAnimation('idle', 13); } else
-                {
-
-                if (Math.abs(this.vel.x) <70) { this.playAnimation('walk', 3); }
-                
-
-                 }
-
-
-              }
-          }
-            
-            if (moving == true) { this.playAnimation('slide', 20); }
-
-            
-
-          } else if (Math.abs(this.vel.x) > 300) {
+            if (avx > 120) {
+              this.playAnimation('slide', 20);
+            } else if (avx < 30) {
+              this.playAnimation('idle', 13);
+            } else if (avx < 70) {
+              this.playAnimation('walk', 3);
+            }
+          } else if (avx > 300) {
             this.playAnimation('run', 30);
           } else {
-            
-            if (Math.abs(this.vel.x) <70) { this.playAnimation('walk', 40); } else { this.playAnimation('walk', 20);  }
-            //this.playAnimation('walk', 20);
+            if (avx < 70) {
+              this.playAnimation('walk', 40);
+            } else {
+              this.playAnimation('walk', 20);
+            }
           }
         } else {
           this.playAnimation('idle', 13);
@@ -137,7 +143,13 @@ package {
       // Jumping
       if (Input.kp('SPACE') && this.grounded) {
         this.jumping = true;
-        this.vel.y -= this.jumpForce;
+        if (this.canSecondJump) {
+          this.secondJumping = true;
+          this.vel.y -= this.secondJumpForce;
+        } else {
+          this.vel.y -= this.jumpForce;
+        }
+        
         this.playAnimation('jump', 7);
       }
 
@@ -150,20 +162,33 @@ package {
       super.step(dt);
     }
 
-    protected function playAnimation(name:String, fps:uint):void {
-      if (fps) this.ss.setFps(fps);
-      this.ss.playAnimation(name);
+    protected function secondJumpMiss(e:Event):void {
+      this.canSecondJump = false;
     }
 
     override protected function landed():void {
       super.landed();
-      this.jumping = false;
-      this.jumpDamp = 1;
+      if (this.jumping) {
+        this.jumping = false;
+        this.jumpDamp = 1;
+
+        if (!this.secondJumping) {
+          this.canSecondJump = true;
+          this.secondJumpTimer.reset();
+          this.secondJumpTimer.start();
+        }
+
+        this.secondJumping = false;
+      }
     }
 
     override protected function falling():void {
       this.grounded = false;
       this.spriteSheet.playAnimation('fall');
+    }
+
+    override protected function roof():void {
+      this.jumpDamp = 0;
     }
 
   }
