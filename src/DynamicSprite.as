@@ -16,16 +16,27 @@ package {
     public var map:Map;
     public var hit:Rectangle; // X / Y offset from self
 
-    public var grounded:Boolean = false; // True when on the ground
+    public var acc:Vec2; // Acceleration vector
+    public var grav:Vec2; // Gravity/wind vector
+    public var vel:Vec2; // Velocity vector
+    public var maxVel:Vec2;
+    public var damp:Vec2; // Damping vector
 
-    public var acc:Vec2 = new Vec2(); // Acceleration vector
-    public var grav:Vec2 = new Vec2(); // Gravity/wind vector
-    public var vel:Vec2 = new Vec2(); // Velocity vector
-    public var damp:Vec2 = new Vec2(0.97, 0.97); // Damping vector
+    public var grounded:Boolean; // True when on the ground
 
     public function DynamicSprite(texture:Texture2D = null) {
       super(texture);
+
       this.hit = new Rectangle(0, 0, this.width, this.height);
+
+      this.acc = new Vec2();
+      this.grav = new Vec2();
+      this.vel = new Vec2();
+      this.maxVel = new Vec2(1000, 1000);
+      this.damp = new Vec2(0.97, 9.97);
+
+      this.grounded = false;
+
     }
 
     public function get bounds():Rectangle {
@@ -51,8 +62,16 @@ package {
     }
 
     override protected function step(dt:Number):void {
-      this.vel.addSelf(this.acc.scale(dt));
-      this.vel.subSelf(this.vel.mulSelf(this.damp).scale(dt));
+
+      if (Math.abs(this.vel.x) <= this.maxVel.x) {
+        this.vel.x += this.acc.x * dt;
+      }
+
+      if (Math.abs(this.vel.y) <= this.maxVel.y) {
+        this.vel.y += this.acc.y * dt;
+      }
+
+      this.vel.mulSelf(this.damp);
 
       this.y += this.vel.y * dt;
       if (this.map) {
@@ -65,7 +84,16 @@ package {
         this.collideMapX();
       }
 
+      if (Math.abs(this.vel.y) < 0.1) {
+        this.vel.y = 0;
+      }
+
+      if (Math.abs(this.vel.x) < 0.1) {
+        this.vel.x = 0;
+      }
+
       this.acc = this.grav.clone();
+
       super.step(dt);
     }
 

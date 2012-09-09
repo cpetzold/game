@@ -15,12 +15,15 @@ package {
 
     public var walkSpeed:Number;
     public var runSpeed:Number;
+    public var turnDamp:Number;
+
     public var jumpForce:Number;
     public var jumpSpeed:Number;
     public var jumpDamp:Number;
     public var jumpDampRate:Number;
 
     public var moving:Boolean;
+    public var turning:Boolean;
     public var running:Boolean;
     public var jumping:Boolean;
 
@@ -33,18 +36,20 @@ package {
       this.spriteSheet.playAnimation('idle');
 
       this.grav = new Vec2(0, 1500);
-      this.damp = new Vec2(0.9, 1);
+      this.damp = new Vec2(1, 1);
       this.hit = new Rectangle(24, 32, 16, 28);
 
       this.walkSpeed = 500;
       this.runSpeed = 3000;
+      this.turnDamp = 0.7;
 
-      this.jumpForce = 500;
+      this.jumpForce = 300;
       this.jumpSpeed = 100;
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
       this.moving = false;
+      this.turning = false;
       this.running = false;
       this.jumping = false;
 
@@ -66,20 +71,26 @@ package {
       this.running = Input.kd('Z');
 
       if (Input.kd('LEFT')) {
-        this.moving = true;
         this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
         this._scaleX = -1;
-      }
-
-      if (Input.kd('RIGHT')) {
         this.moving = true;
+        this.turning = this.movingRight;
+      } else if (Input.kd('RIGHT')) {
         this.acc.x = (this.running ? this.runSpeed : this.walkSpeed);
         this._scaleX = 1;
+        this.moving = true;
+        this.turning = this.movingLeft;
       }
 
+      if (!this.moving || this.turning) {
+        this.vel.x *= this.turnDamp;
+      }
+
+      DConsole.print(this.vel.toString());
+
       if (this.grounded) {
-        if (this.moving) {
-          if (this.running) {
+        if (Math.abs(this.vel.x) > 5) {
+          if (Math.abs(this.vel.x) > 300) {
             this.playAnimation('run', 30);
           } else {
             this.playAnimation('walk', 13);
@@ -88,26 +99,20 @@ package {
           this.playAnimation('idle', 13);
         }
       } else if (this.movingDown) {
-        this.playAnimation('fall', 5);
+        this.playAnimation('fall', 7);
       }
 
       // Jumping
-      if (Input.kp('X')) {
-        DConsole.print('JUMP!');
-        // First leaving the ground
-        if (this.grounded) {
-          this.jumping = true;
-          this.vel.y -= this.jumpForce;
-          this.playAnimation('jump', 5);
-        }
+      if (Input.kp('X') && this.grounded) {
+        this.jumping = true;
+        this.vel.y -= this.jumpForce;
+        this.playAnimation('jump', 7);
       }
 
-      if (Input.kd('X')) {
-        // More height while the key is held down
-        if (this.jumping) {
-          this.vel.y -= (this.jumpSpeed * this.jumpDamp);
-          this.jumpDamp *= this.jumpDampRate;
-        }
+      // More height while the key is held down
+      if (Input.kd('X') && this.jumping) {
+        this.vel.y -= (this.jumpSpeed * this.jumpDamp);
+        this.jumpDamp *= this.jumpDampRate;
       }
 
       super.step(dt);
