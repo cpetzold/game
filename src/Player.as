@@ -86,8 +86,6 @@ package {
         this.vel.x *= this.turnDamp;
       }
 
-      DConsole.print(this.vel.toString());
-
       if (this.grounded) {
         if (Math.abs(this.vel.x) > 5) {
           if (Math.abs(this.vel.x) > 300) {
