@@ -11,9 +11,8 @@ package {
 
   public class Level extends Scene2D {
 
-    protected var tmx:TmxMap;
+    public var tmx:TmxMap;
     public var map:Map;
-    public var player:Player;
 
     public var events:EventDispatcher;
 
@@ -25,7 +24,7 @@ package {
     private function loadMap(name:String):void {
       var loader:URLLoader = new URLLoader();
       loader.addEventListener(Event.COMPLETE, this.onLoadMap);
-      loader.load(new URLRequest('../data/' + name + '.tmx'));
+      loader.load(new URLRequest('data/' + name + '.tmx'));
     }
 
     private function onLoadMap(e:Event):void {
@@ -36,15 +35,7 @@ package {
     }
 
     private function init():void {
-      this.map = new Map(this.tmx.getLayer('map'));
-
-      this.player = new Player(this.map);
-      this.player.x = 400;
-      this.player.y = 200;
-
-      this.addChild(this.map);
-      this.addChild(this.player);
-
+      this.map = new Map(this);
       this.events.dispatchEvent(new Event('init'));
       //this.camera.zoom = 2;
     }

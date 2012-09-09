@@ -168,7 +168,7 @@ package {
         , offsets:Array = [];
 
       for (var i:int = 0; i < tiles.length; i++) {
-        offsets[i] = tiles[i] ? bounds.intersection(tiles[i].bounds) : null;
+        offsets[i] = tiles[i] ? bounds.intersection(tiles[i]) : null;
       }
 
       return offsets;

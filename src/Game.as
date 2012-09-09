@@ -37,8 +37,8 @@ package {
       super.addedToStage(e);
       
       this.addChild(stats);
-      //this.addChild(DConsole.view);
-      //DConsole.show();
+      this.addChild(DConsole.view);
+      DConsole.show();
 
       this.currentLevel = new Level('map2');
       this.currentLevel.events.addEventListener('init', this.onLevelInit);
