@@ -59,7 +59,10 @@ package {
     private function addAnimations():void {
       this.ss = new DynamicSpriteSheet(texture.bitmapWidth, texture.bitmapHeight, 64, 64, 13, true); // 64 = width / 64 = height / 13 = fps
       this.ss.addAnimation('idle', [0,1,2,3], true); 
-      this.ss.addAnimation('walk', [8,9,10,11,12,13,14,15], true);
+      this.ss.addAnimation('walk', [9,10,11,12,13,14,15], true);
+      this.ss.addAnimation('quickwalk', [8,9,10,12,15], true);
+
+
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       this.ss.addAnimation('jump', [24,25,26], false); //Frozen on keyframe 1, missing transition
       this.ss.addAnimation('fall', [32,33,34], false); // Frozen on keyframe 2, missing transition
@@ -89,16 +92,40 @@ package {
 
       if (!this.moving || this.turning) {
         this.vel.x *= this.turnDamp;
+        if (Math.abs(this.vel.x) < 30) { vel.x = 0; }
       }
 
       if (this.grounded) {
         if (Math.abs(this.vel.x) > 5) {
+
           if (!this.moving || this.turning) {
-            this.playAnimation('slide', 20);
+
+          
+          if (moving == false){
+              if (Math.abs(this.vel.x) >120) { this.playAnimation('slide', 20); }  else {
+
+                if (Math.abs(this.vel.x) <30) { this.playAnimation('idle', 13); } else
+                {
+
+                if (Math.abs(this.vel.x) <70) { this.playAnimation('walk', 3); }
+                
+
+                 }
+
+
+              }
+          }
+            
+            if (moving == true) { this.playAnimation('slide', 20); }
+
+            
+
           } else if (Math.abs(this.vel.x) > 300) {
             this.playAnimation('run', 30);
           } else {
-            this.playAnimation('walk', 13);
+            
+            if (Math.abs(this.vel.x) <70) { this.playAnimation('walk', 40); } else { this.playAnimation('walk', 20);  }
+            //this.playAnimation('walk', 20);
           }
         } else {
           this.playAnimation('idle', 13);
