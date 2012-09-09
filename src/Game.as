@@ -26,6 +26,9 @@ package {
       this.stage.scaleMode = StageScaleMode.NO_SCALE;
       this.stage.align = StageAlign.TOP_LEFT;
 
+      this.addEventListener(Event.DEACTIVATE, this.onLostFocus);
+      this.addEventListener(Event.ACTIVATE, this.onFocus);
+
       Input.initialize(this.stage, false);
       super(Context3DRenderMode.AUTO, 60);
     }
@@ -34,20 +37,42 @@ package {
       super.addedToStage(e);
       
       this.addChild(stats);
-      this.addChild(DConsole.view);
+      //this.addChild(DConsole.view);
       //DConsole.show();
 
       this.currentLevel = new Level('map2');
+      this.currentLevel.events.addEventListener('init', this.onLevelInit);
       this.setActiveScene(this.currentLevel);
-      currentLevel.events.addEventListener('init', this.onLevelInit);
     }
 
     protected function onLevelInit(e:Event):void {
       this.start();
     }
 
+    protected function onLostFocus(e:Event):void {
+      this.pause();
+    }
+
+    protected function onFocus(e:Event):void {
+      this.resume();
+    }
+
+    public function togglePause():void {
+      if (!this.isPaused) {
+        this.pause();
+      } else {
+        this.resume();    
+      }
+    }
+
     override protected function mainLoop(e:Event):void {
+
+      if (Input.kp('ESC')) {
+        this.togglePause();
+      }
+
       super.mainLoop(e);
+
       stats.update(statsObject.totalDrawCalls, statsObject.totalTris);
       Input.clear();
     }

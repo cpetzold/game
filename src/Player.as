@@ -69,7 +69,7 @@ package {
 
     override protected function step(dt:Number):void {
       this.moving = false;
-      this.running = Input.kd('Z');
+      this.running = Input.kd('SHIFT');
 
       if (Input.kd('LEFT')) {
         this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
@@ -93,7 +93,7 @@ package {
 
       if (this.grounded) {
         if (Math.abs(this.vel.x) > 5) {
-          if (!this.moving || this.turning) {
+          if (this.turning) {
             this.playAnimation('slide', 20);
           } else if (Math.abs(this.vel.x) > 300) {
             this.playAnimation('run', 30);
@@ -108,14 +108,14 @@ package {
       }
 
       // Jumping
-      if (Input.kp('X') && this.grounded) {
+      if (Input.kp('SPACE') && this.grounded) {
         this.jumping = true;
         this.vel.y -= this.jumpForce;
         this.playAnimation('jump', 7);
       }
 
       // More height while the key is held down
-      if (Input.kd('X') && this.jumping) {
+      if (Input.kd('SPACE') && this.jumping) {
         this.vel.y -= (this.jumpSpeed * this.jumpDamp);
         this.jumpDamp *= this.jumpDampRate;
       }
