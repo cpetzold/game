@@ -41,7 +41,7 @@ package {
 
       this.walkSpeed = 500;
       this.runSpeed = 3000;
-      this.turnDamp = 0.7;
+      this.turnDamp = 0.9;
 
       this.jumpForce = 300;
       this.jumpSpeed = 100;
@@ -63,6 +63,7 @@ package {
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       this.ss.addAnimation('jump', [24,25,26], false); //Frozen on keyframe 1, missing transition
       this.ss.addAnimation('fall', [32,33,34], false); // Frozen on keyframe 2, missing transition
+      this.ss.addAnimation('slide', [40,41,42,43,44], false);
       this.spriteSheet = this.ss;
     }
 
@@ -72,14 +73,18 @@ package {
 
       if (Input.kd('LEFT')) {
         this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
-        this._scaleX = -1;
         this.moving = true;
         this.turning = this.movingRight;
       } else if (Input.kd('RIGHT')) {
         this.acc.x = (this.running ? this.runSpeed : this.walkSpeed);
-        this._scaleX = 1;
         this.moving = true;
         this.turning = this.movingLeft;
+      }
+
+      if (this.movingLeft) {
+        this._scaleX = -1;
+      } else if (this.movingRight) {
+        this._scaleX = 1;
       }
 
       if (!this.moving || this.turning) {
@@ -88,7 +93,9 @@ package {
 
       if (this.grounded) {
         if (Math.abs(this.vel.x) > 5) {
-          if (Math.abs(this.vel.x) > 300) {
+          if (!this.moving || this.turning) {
+            this.playAnimation('slide', 20);
+          } else if (Math.abs(this.vel.x) > 300) {
             this.playAnimation('run', 30);
           } else {
             this.playAnimation('walk', 13);
