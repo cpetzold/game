@@ -14,29 +14,6 @@ package {
 
     public function Scene() {
 
-    //MAP ARRAY
-    var mapArray:Array = new Array();
-    mapArray[0] = [1,1,1,1];
-    mapArray[1] = [1,0,0,1];
-    mapArray[2] = [1,0,0,1];
-    mapArray[3] = [1,1,1,1];
-
-
-    //BUILD MAP
-    for ( var row:int = 0; row <= 3; row++ )
-      {
-      for ( var column:int = 0; column <= 4; column++ )
-        {
-        if (mapArray[row][column] == 1){
-
-           tile = new Tile();
-           tile.x = (row * 32 + 164);
-           tile.y = (column * 32 + 164);
-           addChild(tile);
-         }
-        } 
-    }
-
 
     //PLAYER
       this.player = new Player();
