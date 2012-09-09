@@ -38,7 +38,7 @@ package {
       
       this.addChild(stats);
       this.addChild(DConsole.view);
-      DConsole.show();
+      //DConsole.show();
 
       this.currentLevel = new Level('map2');
       this.currentLevel.events.addEventListener('init', this.onLevelInit);

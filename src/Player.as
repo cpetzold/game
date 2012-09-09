@@ -66,6 +66,9 @@ package {
       this.jumping = false;
       this.secondJumping = false;
 
+      //this._pivot.x = 32;
+      //this._pivot.y = 64;
+
       this.debug = true;
     }
 
@@ -138,6 +141,16 @@ package {
         }
       } else if (this.movingDown) {
         this.playAnimation('fall', 7);
+      }
+
+      // In-air sprite rotation
+      if (!this.grounded) {
+        this._rotationZ = (this.vel.x / 1000) * (this.vel.y / 1000) * 50;
+        if (this.movingUp) {
+          this._rotationZ *= -1;
+        }
+      } else {
+        this._rotationZ = 0;
       }
 
       // Jumping
