@@ -13,6 +13,8 @@ package {
 
     public var tmx:TmxMap;
     public var map:Map;
+    
+    public var player:Player;
 
     public var events:EventDispatcher;
 
@@ -43,8 +45,8 @@ package {
     override protected function step(dt:Number):void {
       super.step(dt);
 
-      //this.camera.x += ((this.player.x - (this.camera.sceneWidth / 2)) - this.camera.x) * 0.2;
-      //this.camera.y += ((this.player.y - (this.camera.sceneHeight / 2)) - this.camera.y) * 0.2;
+      this.camera.x += ((this.player.x - (this.camera.sceneWidth / 2)) - this.camera.x) * 0.2;
+      this.camera.y += ((this.player.y - (this.camera.sceneHeight / 2)) - this.camera.y) * 0.2;
     }
 
   }

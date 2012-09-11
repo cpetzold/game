@@ -154,6 +154,7 @@ package {
             node = new Player(this);
             node.x = object.x;
             node.y = object.y;
+            this.level.player = node as Player;
             break;
           default:
             node = null;

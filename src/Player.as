@@ -42,7 +42,7 @@ package {
       this.addAnimations();
       this.spriteSheet.playAnimation('idle');
 
-      this.grav = new Vec2(0, 1500);
+      this.grav = new Vec2(0, 2000);
       this.damp = new Vec2(1, 1);
       this.hit = new Rectangle(24, 32, 16, 28);
 
@@ -50,13 +50,13 @@ package {
       this.runSpeed = 1000;
       this.turnDamp = 0.9;
 
-      this.jumpForce = 200;
+      this.jumpForce = 300;
       this.jumpSpeed = 100;
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.secondJumpForce = 400;
-      this.secondJumpTimer = new Timer(100);
+      this.secondJumpForce = 500;
+      this.secondJumpTimer = new Timer(200);
       this.secondJumpTimer.addEventListener('timer', this.secondJumpMiss);
       this.canSecondJump = false;
 
@@ -108,9 +108,9 @@ package {
       }
 
       if (this.movingLeft) {
-        this._scaleX = -1;
+        this.scaleX = -1;
       } else if (this.movingRight) {
-        this._scaleX = 1;
+        this.scaleX = 1;
       }
 
       if (!this.moving || this.turning) {
@@ -144,6 +144,7 @@ package {
       }
 
       // In-air sprite rotation
+      /*
       if (!this.grounded) {
         this._rotationZ = (this.vel.x / 1000) * (this.vel.y / 1000) * 50;
         if (this.movingUp) {
@@ -152,6 +153,7 @@ package {
       } else {
         this._rotationZ = 0;
       }
+      */
 
       // Jumping
       if (Input.kp('SPACE') && this.grounded) {
