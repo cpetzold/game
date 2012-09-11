@@ -3,12 +3,12 @@ package {
   import flash.events.Event;
   import flash.display.BitmapData;
   import flash.display.Bitmap;
+  import flash.display3D.Context3D;
   import flash.net.URLLoader;
   import flash.net.URLRequest;
   import net.pixelpracht.tmx.*;
   import de.nulldesign.nd2d.display.*;
   import de.nulldesign.nd2d.materials.texture.*;
-  import com.furusystems.dconsole2.DConsole;
 
   public class Map extends Sprite2DBatch {
 
@@ -58,7 +58,7 @@ package {
       this.createObjects(this.objectGroup.objects);
     }
 
-    public function getTile(x:int, y:int):Tile {
+    public function getTile(x:Number, y:Number):Tile {
       if (x < 0 || y < 0 || x >= this.tilesWide || y >= this.tilesHigh) {
         return null;
       } else {
@@ -66,7 +66,7 @@ package {
       }
     }
 
-    public function getTileAt(x:int, y:int):Tile {
+    public function getTileAt(x:Number, y:Number):Tile {
       if (x < 0 || y < 0 ||
           x > this.tilesWide * this.tileSize ||
           y > this.tilesHigh * this.tileSize) {
@@ -75,6 +75,33 @@ package {
         return this.getTile(Math.floor(x / this.tileSize),
                             Math.floor(y / this.tileSize));
       }
+    }
+
+    protected function getVisibleTiles(camera:Camera2D):Vector.<Node2D> {
+      var xMin:uint = Math.max(0, Math.floor(camera.x / this.tileSize))
+        , yMin:uint = Math.max(0, Math.floor(camera.y / this.tileSize))
+        , xMax:uint = xMin + Math.floor(camera.sceneWidth / this.tileSize)
+        , yMax:uint = yMin + Math.floor(camera.sceneHeight / this.tileSize)
+        , visibleTiles:Vector.<Node2D> = new Vector.<Node2D>()
+        , tile:Tile;
+
+      for (var y:uint = yMin; y <= yMax; y++) {
+        for (var x:uint = xMin; x <= xMax; x++) {
+          tile = this.getTile(x, y)
+          if (tile) {
+            visibleTiles.push(tile as Node2D);
+          }
+        }
+      }
+
+      return visibleTiles;
+    }
+
+    // Overriding original draw method to only draw visible tiles,
+    // avoiding iteration over all tilles to determine visibility.
+    override protected function draw(context:Context3D, camera:Camera2D):void {
+      this.children = this.getVisibleTiles(camera);
+      super.draw(context, camera);
     }
 
     public function getCollisionTile(x:int, y:int):Rectangle {
