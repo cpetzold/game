@@ -2,6 +2,7 @@ package {
 
   import flash.display.StageAlign;
   import flash.display.StageScaleMode;
+  import flash.display.StageDisplayState;
   import flash.display3D.Context3DRenderMode;
   import flash.events.Event;
   import flash.events.KeyboardEvent;
@@ -65,10 +66,22 @@ package {
       }
     }
 
+    public function toggleFullscreen():void {
+      if (this.stage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE) {
+        this.stage.displayState = StageDisplayState.NORMAL;
+      } else {
+        this.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+      }
+    }
+
     override protected function mainLoop(e:Event):void {
 
       if (Input.kp('ESC')) {
         this.togglePause();
+      }
+
+      if (Input.kp('F')) {
+        this.toggleFullscreen();
       }
 
       super.mainLoop(e);
