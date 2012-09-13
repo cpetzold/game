@@ -104,7 +104,11 @@ package {
       super.draw(context, camera);
     }
 
-    public function getCollisionTile(x:int, y:int):Rectangle {
+    public function pointCheck(x:Number, y:Number):Boolean {
+      return !!this.getCollisionTileAt(x, y);
+    }
+
+    public function getCollisionTile(x:Number, y:Number):Rectangle {
       if (x < 0 || y < 0 || x >= this.tilesWide || y >= this.tilesHigh) {
         return null;
       } else {
@@ -112,7 +116,7 @@ package {
       }
     }
 
-    public function getCollisionTileAt(x:int, y:int):Rectangle {
+    public function getCollisionTileAt(x:Number, y:Number):Rectangle {
       if (x < 0 || y < 0 ||
           x > this.tilesWide * this.tileSize ||
           y > this.tilesHigh * this.tileSize) {

@@ -28,11 +28,18 @@ package {
     public var secondJumpTimer:Timer;
     public var canSecondJump:Boolean;
 
+    public var wallClingTimer:Timer;
+
     public var moving:Boolean;
     public var turning:Boolean;
     public var running:Boolean;
     public var jumping:Boolean;
     public var secondJumping:Boolean;
+
+    public var grabLeft:Boolean;
+    public var grabRight:Boolean;
+    public var grabLocked:Boolean;
+    public var grabTimer:Timer;
 
     public function Player(map:Map) {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
@@ -60,16 +67,25 @@ package {
       this.secondJumpTimer.addEventListener('timer', this.secondJumpMiss);
       this.canSecondJump = false;
 
+      this.wallClingTimer = new Timer(200);
+
       this.moving = false;
       this.turning = false;
       this.running = false;
       this.jumping = false;
       this.secondJumping = false;
 
-      //this._pivot.x = 32;
-      //this._pivot.y = 64;
+      this.grabLeft = false;
+      this.grabRight = false;
+      this.grabLocked = false;
+      this.grabTimer = new Timer(200);
+      this.grabTimer.addEventListener('timer', this.grabRelease);
 
       this.debug = true;
+    }
+
+    protected function grabRelease(e:Event):void {
+      this.grabLocked = false;
     }
 
     protected function playAnimation(name:String, fps:uint):void {
@@ -92,16 +108,22 @@ package {
     }
 
     override protected function step(dt:Number):void {
-      var avx:Number = Math.abs(this.vel.x);
+      var avx:Number = Math.abs(this.vel.x)
+        , bounds:Rectangle = this.bounds
+        , midY:Number = bounds.top + (bounds.height / 2);
 
       this.moving = false;
       this.running = Input.kd('SHIFT');
+      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top)
+                                      || this.map.pointCheck(bounds.left - 1, bounds.bottom));
+      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top)
+                                      || this.map.pointCheck(bounds.right, bounds.bottom));
 
-      if (Input.kd('LEFT')) {
+      if (Input.kd('LEFT') && !(this.grabRight && this.grabLocked)) {
         this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
         this.moving = true;
         this.turning = this.movingRight;
-      } else if (Input.kd('RIGHT')) {
+      } else if (Input.kd('RIGHT') && !(this.grabLeft && this.grabLocked)) {
         this.acc.x = (this.running ? this.runSpeed : this.walkSpeed);
         this.moving = true;
         this.turning = this.movingLeft;
@@ -115,6 +137,12 @@ package {
 
       if (!this.moving || this.turning) {
         this.vel.x *= (avx > 30) ? this.turnDamp : 0;
+      }
+
+      if (this.grabbingWall && !this.grabLocked) {
+        this.grabLocked = true;
+        this.grabTimer.reset();
+        this.grabTimer.start();
       }
 
       if (this.grounded) {
@@ -139,42 +167,47 @@ package {
         } else {
           this.playAnimation('idle', 13);
         }
-      } else if (this.movingDown) {
-        this.playAnimation('fall', 7);
-      }
-
-      // In-air sprite rotation
-      /*
-      if (!this.grounded) {
-        this._rotationZ = (this.vel.x / 1000) * (this.vel.y / 1000) * 50;
-        if (this.movingUp) {
-          this._rotationZ *= -1;
-        }
       } else {
-        this._rotationZ = 0;
+        if (this.movingDown) {
+          this.playAnimation('fall', 7);
+        }
       }
-      */
 
       // Jumping
-      if (Input.kp('SPACE') && this.grounded) {
+      if (Input.kp('SPACE') && (this.grounded || this.grabbingWall)) {
         this.jumping = true;
+
         if (this.canSecondJump) {
           this.secondJumping = true;
-          this.vel.y -= this.secondJumpForce;
+          this.vel.y = -this.secondJumpForce;
         } else {
-          this.vel.y -= this.jumpForce;
+          this.vel.y = -this.jumpForce;
+        }
+
+        if (!this.grounded && this.grabbingWall) {
+          this.grabLocked = true;
+          this.vel.y *= 3;
+          if (this.grabLeft) {
+            this.vel.x = 2 * this.jumpForce;
+          } else if (this.grabRight) {
+            this.vel.x = 2 * -this.jumpForce;
+          }
         }
         
         this.playAnimation('jump', 7);
       }
 
       // More height while the key is held down
-      if (Input.kd('SPACE') && this.jumping) {
+      if (Input.kd('SPACE') && this.jumping && this.movingUp) {
         this.vel.y -= (this.jumpSpeed * this.jumpDamp);
         this.jumpDamp *= this.jumpDampRate;
       }
 
       super.step(dt);
+    }
+
+    public function get grabbingWall():Boolean {
+      return this.grabRight || this.grabLeft;
     }
 
     protected function secondJumpMiss(e:Event):void {

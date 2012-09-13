@@ -49,10 +49,11 @@ package {
         this.player.reset();
       }
 
-      this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
+      //this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
+      //this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
 
-      //this.camera.x += ((this.player.x - (this.camera.sceneWidth / 2)) - this.camera.x) * 0.2;
-      //this.camera.y += ((this.player.y - (this.camera.sceneHeight / 2)) - this.camera.y) * 0.2;
+      this.camera.x += ((this.player.x - (this.camera.sceneWidth / 2)) - this.camera.x) * 0.1;
+      this.camera.y += ((this.player.y - (this.camera.sceneHeight / 2)) - this.camera.y) * 0.1;
     }
 
   }

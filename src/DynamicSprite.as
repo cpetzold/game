@@ -1,5 +1,7 @@
 package {
   import flash.geom.Rectangle;
+  import flash.events.Event;
+  import flash.utils.Timer;
   import de.nulldesign.nd2d.display.Sprite2D;
   import de.nulldesign.nd2d.display.Node2D;
   import de.nulldesign.nd2d.materials.texture.Texture2D;
@@ -32,11 +34,10 @@ package {
       this.acc = new Vec2();
       this.grav = new Vec2();
       this.vel = new Vec2();
-      this.maxVel = new Vec2(1000, 1000);
+      this.maxVel = new Vec2(1000, 800);
       this.damp = new Vec2(0.97, 9.97);
 
       this.grounded = false;
-
     }
 
     override public function reset():void {
