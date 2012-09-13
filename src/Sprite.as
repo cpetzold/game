@@ -5,9 +5,11 @@ package {
 
   public class Sprite extends Sprite2D {
 
+    public var startPos:Vec2;
     public var debug:Boolean = false;
 
     public function Sprite(texture:Texture2D = null) {
+      this.startPos = new Vec2();
       super(texture);
     }
 
@@ -18,6 +20,10 @@ package {
 
     public function get pos():Vec2 {
       return new Vec2(this.x, this.y);
+    }
+
+    public function reset():void {
+      this.pos = this.startPos.clone();
     }
 
   }

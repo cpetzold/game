@@ -182,6 +182,8 @@ package {
             node.x = object.x;
             node.y = object.y;
             this.level.player = node as Player;
+            this.level.player.startPos.x = this.level.player.x;
+            this.level.player.startPos.y = this.level.player.y;
             break;
           default:
             node = null;

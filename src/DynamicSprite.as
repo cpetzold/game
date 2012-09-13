@@ -39,6 +39,13 @@ package {
 
     }
 
+    override public function reset():void {
+      this.acc.zero();
+      this.vel.zero();
+      this.grounded = false;
+      super.reset(); 
+    }
+
     public function get bounds():Rectangle {
       var bounds:Rectangle = this.hit.clone();
       bounds.offset(this.x - (this.width / 2), this.y - (this.height / 2));
@@ -63,12 +70,14 @@ package {
 
     override protected function step(dt:Number):void {
 
-      if (Math.abs(this.vel.x) <= this.maxVel.x) {
-        this.vel.x += this.acc.x * dt;
+      this.vel.addSelf(this.acc.scale(dt));
+
+      if (Math.abs(this.vel.x) > this.maxVel.x) {
+        this.vel.x = this.movingLeft ? -this.maxVel.x : this.maxVel.x;
       }
 
-      if (Math.abs(this.vel.y) <= this.maxVel.y) {
-        this.vel.y += this.acc.y * dt;
+      if (Math.abs(this.vel.y) > this.maxVel.y) {
+        this.vel.y = this.movingUp ? -this.maxVel.y : this.maxVel.y;
       }
 
       this.vel.mulSelf(this.damp);
