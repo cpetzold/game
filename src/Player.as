@@ -101,7 +101,7 @@ package {
 
 
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
-      this.ss.addAnimation('jump', [24,25,26], false); //Frozen on keyframe 1, missing transition
+      this.ss.addAnimation('jump', [25,26,27], false); //Frozen on keyframe 1, missing transition
       this.ss.addAnimation('fall', [32,33,34], false); // Frozen on keyframe 2, missing transition
       this.ss.addAnimation('slide', [40,41,42,43,44], false);
       this.spriteSheet = this.ss;
