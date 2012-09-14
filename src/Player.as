@@ -62,7 +62,7 @@ package {
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.secondJumpForce = 480;
+      this.secondJumpForce = 380;
       this.secondJumpTimer = new Timer(200);
       this.secondJumpTimer.addEventListener('timer', this.secondJumpMiss);
       this.canSecondJump = false;
@@ -99,6 +99,7 @@ package {
       this.ss.addAnimation('walk', [9,10,11,12,13,14,15], true);
       this.ss.addAnimation('quickwalk', [8,9,10,12,15], true);
 
+      this.ss.addAnimation('wallgrab', [48], false);
 
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       this.ss.addAnimation('jump', [25,26,27], false); //Frozen on keyframe 1, missing transition
@@ -154,6 +155,18 @@ package {
         this.grabTimer.reset();
         this.grabTimer.start();
       }
+
+      //WALL GRAB
+      if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
+          if (vel.y > 10){ 
+           if (grounded == true){
+           this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
+      } else if (Input.kd('RIGHT') && (this.grabRight && this.grabLocked)) {
+          if (vel.y > 10){ 
+            if (grounded == true){
+            this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
+      }
+      //WALL GRAB END
 
       if (this.grounded) {
         if (avx > 5) {
