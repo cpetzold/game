@@ -42,11 +42,7 @@ package {
       //DConsole.show();
 
       this.currentLevel = new Level('map2');
-      this.currentLevel.events.addEventListener('init', this.onLevelInit);
       this.setActiveScene(this.currentLevel);
-    }
-
-    protected function onLevelInit(e:Event):void {
       this.start();
     }
 

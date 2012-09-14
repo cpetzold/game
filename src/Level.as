@@ -4,6 +4,7 @@ package {
   import flash.display.Bitmap;
   import flash.net.URLLoader;
   import flash.net.URLRequest;
+  import flash.utils.ByteArray;
   import net.pixelpracht.tmx.*;
   import de.nulldesign.nd2d.display.*;
   import de.nulldesign.nd2d.materials.texture.*
@@ -18,28 +19,19 @@ package {
 
     public var events:EventDispatcher;
 
+    [Embed(source='../data/map2.tmx', mimeType='application/octet-stream')]
+    protected var mapFile:Class;
+
     public function Level(name:String) {
       this.events = new EventDispatcher();
-      this.loadMap(name);
-    }
+      //this.loadMap(name);
 
-    private function loadMap(name:String):void {
-      var loader:URLLoader = new URLLoader();
-      loader.addEventListener(Event.COMPLETE, this.onLoadMap);
-      loader.load(new URLRequest('data/' + name + '.tmx'));
-    }
+      var mapFile:ByteArray = new mapFile();
+      var mapStr:String = mapFile.readUTFBytes(mapFile.length);
+      var mapXML:XML = new XML(mapStr);
 
-    private function onLoadMap(e:Event):void {
-      var xml:XML = new XML(e.target.data);
-
-      this.tmx = new TmxMap(xml);
-      this.init();
-    }
-
-    private function init():void {
+      this.tmx = new TmxMap(mapXML);
       this.map = new Map(this);
-      this.events.dispatchEvent(new Event('init'));
-      //this.camera.zoom = 2;
     }
 
     override protected function step(dt:Number):void {
