@@ -195,9 +195,8 @@ package {
         }
 
         if (!this.grounded && this.grabbingWall) {
-          this.grabLocked = true;
-          this.vel.y = 0;
-          this.vel.y = -660;
+          this.grabLocked = false;
+          this.vel.y = -800;
           if (this.grabLeft) {
             this.vel.x = 1.1 * this.jumpForce;
           } else if (this.grabRight) {

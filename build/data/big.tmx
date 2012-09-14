@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="1000" height="24" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiles" tilewidth="32" tileheight="32">
+  <image source="tiles.png" width="128" height="32"/>
+ </tileset>
+ <layer name="tiles" width="1000" height="24">
+  <data encoding="base64" compression="zlib">
+   eJzt3UEKwCAMBEDb/z/aH4iIZm2ZgdwXPC1I0hoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/xFgwAAAAw9hQMAAAAAAAAAOzgbzkAAADk+VsOAAAAAAAAAGfZ3w4AAAB59rcDAABAnn4OAAAAefo5AAAA5OnnAAAAMOfk7jb9HAAAAOZUdGj9HAAAYF3FbazVu1k3ZEjm2pk/3a/1cwAAgLGbe9cNGZK5duZPZ6x+IwAAgK/pEy4DAA==
+  </data>
+ </layer>
+ <layer name="collisions" width="1000" height="24" opacity="0.56">
+  <data encoding="base64" compression="zlib">
+   eJzt3UEKgCAURVGh/e+5HdQn1NeXc6Bh8KYXQccAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAU14YPAAAAeKbPAQAAAAAAAOjC2TUAAADk6XMAAAAAAAAAWMv9cAAAAJC3up/1OQAAALzT5wAAAJCnzwEAACBPnwMAAEBN5/vb9DkAAACn6Ny4nbcDAABU7Xgb6+u56x82JHfN3N+5cTtvBwAAqEq2T6XP0xtm/bOKPgcAADjDDVEBAt0=
+  </data>
+ </layer>
+ <objectgroup name="objects" width="1000" height="24">
+  <object name="player" type="Player" x="160" y="512"/>
+ </objectgroup>
+</map>
