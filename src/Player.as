@@ -53,16 +53,16 @@ package {
       this.damp = new Vec2(1, 1);
       this.hit = new Rectangle(24, 32, 16, 28);
 
-      this.walkSpeed = 500;
+      this.walkSpeed = 600;
       this.runSpeed = 1000;
       this.turnDamp = 0.9;
 
-      this.jumpForce = 365;
+      this.jumpForce = 380;
       this.jumpSpeed = 100;
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.secondJumpForce = 450;
+      this.secondJumpForce = 480;
       this.secondJumpTimer = new Timer(200);
       this.secondJumpTimer.addEventListener('timer', this.secondJumpMiss);
       this.canSecondJump = false;
@@ -129,6 +129,16 @@ package {
         this.turning = this.movingLeft;
       }
 
+      //TEST
+      /*
+      if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
+        this.vel.y *= 0.5;
+      } else if (Input.kd('RIGHT') && (this.grabRight && this.grabLocked)) {
+        this.vel.y *= 0.5;
+      }
+      */
+      //END TEST
+
       if (this.movingLeft) {
         this.scaleX = -1;
       } else if (this.movingRight) {
@@ -186,11 +196,12 @@ package {
 
         if (!this.grounded && this.grabbingWall) {
           this.grabLocked = true;
-          this.vel.y *= 3;
+          this.vel.y = 0;
+          this.vel.y = -660;
           if (this.grabLeft) {
-            this.vel.x = 2 * this.jumpForce;
+            this.vel.x = 1.1 * this.jumpForce;
           } else if (this.grabRight) {
-            this.vel.x = 2 * -this.jumpForce;
+            this.vel.x = 1.1 * -this.jumpForce;
           }
         }
         
