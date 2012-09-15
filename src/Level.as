@@ -19,7 +19,7 @@ package {
 
     public var events:EventDispatcher;
 
-    [Embed(source='../data/map2.tmx', mimeType='application/octet-stream')]
+    [Embed(source='../data/new.tmx', mimeType='application/octet-stream')]
     protected var mapFile:Class;
 
     public function Level(name:String) {
