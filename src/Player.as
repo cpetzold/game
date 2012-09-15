@@ -88,8 +88,9 @@ package {
       this.grabLocked = false;
     }
 
-    protected function playAnimation(name:String, fps:uint):void {
+    protected function playAnimation(name:String, fps:uint, frame:int = -1):void {
       if (fps) this.ss.setFps(fps);
+      if (frame > -1) this.ss.frame = frame;
       this.ss.playAnimation(name);
     }
 
@@ -115,9 +116,9 @@ package {
 
       this.moving = false;
       this.running = Input.kd('SHIFT');
-      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top)
+      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top + 10)
                                       || this.map.pointCheck(bounds.left - 1, bounds.bottom));
-      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top)
+      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 10)
                                       || this.map.pointCheck(bounds.right, bounds.bottom));
 
       if (Input.kd('LEFT') && !(this.grabRight && this.grabLocked)) {
@@ -157,6 +158,7 @@ package {
       }
 
       //WALL GRAB
+      /*
       if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
           if (vel.y > 10){ 
            if (grounded == false){
@@ -165,7 +167,7 @@ package {
           if (vel.y > 10){ 
             if (grounded == false){
             this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
-      }
+      }*/
       //WALL GRAB END
 
       if (this.grounded) {
@@ -191,8 +193,12 @@ package {
           this.playAnimation('idle', 13);
         }
       } else {
-        if (this.movingDown) {
+        if (this.grabbingWall) {
+          this.playAnimation('wallgrab', 20);
+        } else if (this.movingDown) {
           this.playAnimation('fall', 7);
+        } else {
+          this.playAnimation('jump', 7, 2);
         }
       }
 
