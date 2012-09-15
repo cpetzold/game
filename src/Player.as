@@ -159,11 +159,11 @@ package {
       //WALL GRAB
       if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
           if (vel.y > 10){ 
-           if (grounded == true){
+           if (grounded == false){
            this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
       } else if (Input.kd('RIGHT') && (this.grabRight && this.grabLocked)) {
           if (vel.y > 10){ 
-            if (grounded == true){
+            if (grounded == false){
             this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
       }
       //WALL GRAB END
