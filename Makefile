@@ -5,17 +5,18 @@ SWF = ./build/game.swf
 MXMLC = mxmlc
 FLAGS = -swf-version=13 -library-path+=./deps/libs -source-path+=./deps/src -source-path+=./deps/nd2d/src -static-link-runtime-shared-libraries -use-network=false -debug
  
-all: swf run
+all: swf open
+
+debug: swf fdb
 
 swf:
-	@ echo "Compiling..."
 	$(MXMLC) $(FLAGS) -o $(SWF) ./src/Game.as
-	cp -R ./data ./build
 
-run:
-	@ echo "Running..."
+open:
 	open $(SWF)
 
+fdb:
+	fdb $(SWF)
+
 clean:
-	@ echo "Cleaning..."
 	rm $(SWF)

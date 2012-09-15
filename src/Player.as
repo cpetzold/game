@@ -24,17 +24,16 @@ package {
     public var jumpDamp:Number;
     public var jumpDampRate:Number;
 
-    public var secondJumpForce:Number;
-    public var secondJumpTimer:Timer;
-    public var canSecondJump:Boolean;
-
-    public var wallClingTimer:Timer;
+    public var wallJumpForce:Number;
+    public var wallJumpSpeed:Number;
+    public var wallJumpDamp:Number;
+    public var wallJumpDampRate:Number;
 
     public var moving:Boolean;
     public var turning:Boolean;
     public var running:Boolean;
     public var jumping:Boolean;
-    public var secondJumping:Boolean;
+    public var wallJumping:Boolean;
 
     public var grabLeft:Boolean;
     public var grabRight:Boolean;
@@ -62,23 +61,21 @@ package {
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.secondJumpForce = 380;
-      this.secondJumpTimer = new Timer(200);
-      this.secondJumpTimer.addEventListener('timer', this.secondJumpMiss);
-      this.canSecondJump = false;
-
-      this.wallClingTimer = new Timer(200);
+      this.wallJumpForce = 380;
+      this.wallJumpSpeed = 100;
+      this.wallJumpDamp = 1;
+      this.wallJumpDampRate = 0.8;
 
       this.moving = false;
       this.turning = false;
       this.running = false;
       this.jumping = false;
-      this.secondJumping = false;
+      this.wallJumping = false;
 
       this.grabLeft = false;
       this.grabRight = false;
       this.grabLocked = false;
-      this.grabTimer = new Timer(200);
+      this.grabTimer = new Timer(200, 1);
       this.grabTimer.addEventListener('timer', this.grabRelease);
 
       this.debug = true;
@@ -86,6 +83,9 @@ package {
 
     protected function grabRelease(e:Event):void {
       this.grabLocked = false;
+      if (this.grabLeft) {
+        this.x += 1;
+      }
     }
 
     protected function playAnimation(name:String, fps:uint, frame:int = -1):void {
@@ -112,35 +112,35 @@ package {
     override protected function step(dt:Number):void {
       var avx:Number = Math.abs(this.vel.x)
         , bounds:Rectangle = this.bounds
-        , midY:Number = bounds.top + (bounds.height / 2);
+        , midY:Number = bounds.top + (bounds.height / 2)
+        , leftPressed:Boolean = Input.kd('LEFT')
+        , rightPressed:Boolean = Input.kd('RIGHT');
 
       this.moving = false;
       this.running = Input.kd('SHIFT');
-      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top + 10)
+      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top)
                                       || this.map.pointCheck(bounds.left - 1, bounds.bottom));
-      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 10)
+      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top)
                                       || this.map.pointCheck(bounds.right, bounds.bottom));
 
-      if (Input.kd('LEFT') && !(this.grabRight && this.grabLocked)) {
+      if (leftPressed && !(this.grabRight && this.grabLocked)) {
         this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
         this.moving = true;
         this.turning = this.movingRight;
-      } else if (Input.kd('RIGHT') && !(this.grabLeft && this.grabLocked)) {
-        this.acc.x = (this.running ? this.runSpeed : this.walkSpeed);
+      } else if (rightPressed && !(this.grabLeft && this.grabLocked)) {
+        this.acc.x = (this.running ? this.runSpeed : this.walkSpeed) + 100;
         this.moving = true;
         this.turning = this.movingLeft;
       }
 
-      //TEST
-      /*
-      if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
-        this.vel.y *= 0.5;
-      } else if (Input.kd('RIGHT') && (this.grabRight && this.grabLocked)) {
-        this.vel.y *= 0.5;
+      // TEST: Wall slide
+      if (this.grabbingWall &&
+          this.movingDown &&
+          !this.running) {
+        this.vel.y *= 0.8;
       }
-      */
-      //END TEST
 
+      // Flip sprite based on x velocity
       if (this.movingLeft) {
         this.scaleX = -1;
       } else if (this.movingRight) {
@@ -151,24 +151,19 @@ package {
         this.vel.x *= (avx > 30) ? this.turnDamp : 0;
       }
 
-      if (this.grabbingWall && !this.grabLocked) {
-        this.grabLocked = true;
-        this.grabTimer.reset();
-        this.grabTimer.start();
+      if (this.grabbingWall &&
+          !this.grabLocked &&
+          !((leftPressed && this.grabRight) ||
+           (rightPressed && this.grabLeft))) {
+        this.grabWall();
       }
 
-      //WALL GRAB
-      /*
-      if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
-          if (vel.y > 10){ 
-           if (grounded == false){
-           this.vel.y = 0; this.playAnimation('wallgrab', 10); }}
-      } else if (Input.kd('RIGHT') && (this.grabRight && this.grabLocked)) {
-          if (vel.y > 10){ 
-            if (grounded == false){
-            this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
-      }*/
-      //WALL GRAB END
+      if (this.grabLocked &&
+          !this.grabTimer.running &&
+          ((leftPressed && this.grabRight) ||
+           (rightPressed && this.grabLeft))) {
+        this.grabTimer.start();
+      }
 
       if (this.grounded) {
         if (avx > 5) {
@@ -203,33 +198,34 @@ package {
       }
 
       // Jumping
-      if (Input.kp('SPACE') && (this.grounded || this.grabbingWall)) {
-        this.jumping = true;
-
-        if (this.canSecondJump) {
-          this.secondJumping = true;
-          this.vel.y = -this.secondJumpForce;
-        } else {
+      if (Input.kp('SPACE')) {
+        if (this.grounded) {
+          this.jumping = true;
+          this.jumpDamp = 1;
           this.vel.y = -this.jumpForce;
-        }
-
-        if (!this.grounded && this.grabbingWall) {
+          this.playAnimation('jump', 7);
+        } else if (this.grabbingWall) {
+          this.resetJump();
+          this.wallJumping = true;
           this.grabLocked = false;
-          this.vel.y = -800;
-          if (this.grabLeft) {
-            this.vel.x = 1.1 * this.jumpForce;
-          } else if (this.grabRight) {
-            this.vel.x = 1.1 * -this.jumpForce;
+          this.vel.y = -this.wallJumpForce;
+          this.vel.x = this.wallJumpForce;
+          if (this.grabRight) {
+            this.vel.x *= -1;
           }
-        }
-        
-        this.playAnimation('jump', 7);
+          this.playAnimation('jump', 7);
+        }   
       }
 
       // More height while the key is held down
-      if (Input.kd('SPACE') && this.jumping && this.movingUp) {
-        this.vel.y -= (this.jumpSpeed * this.jumpDamp);
-        this.jumpDamp *= this.jumpDampRate;
+      if (Input.kd('SPACE') && this.movingUp) {
+        if (this.jumping) {
+          this.vel.y -= (this.jumpSpeed * this.jumpDamp);
+          this.jumpDamp *= this.jumpDampRate;
+        } else if (this.wallJumping) {
+          this.vel.y -= (this.wallJumpSpeed * this.wallJumpDamp);
+          this.wallJumpDamp *= this.wallJumpDampRate;
+        }
       }
 
       super.step(dt);
@@ -239,24 +235,33 @@ package {
       return this.grabRight || this.grabLeft;
     }
 
-    protected function secondJumpMiss(e:Event):void {
-      this.canSecondJump = false;
+    protected function grabWall():void {
+      this.grabLocked = true;
+      this.grabTimer.reset();
+      if (this.wallJumping) {
+        this.resetWallJump();
+      }
+    }
+
+    protected function resetJump():void {
+      this.jumping = false;
+      this.jumpDamp = 1;
+    }
+
+    protected function resetWallJump():void {
+      this.wallJumping = false;
+      this.wallJumpDamp = 1;
     }
 
     override protected function landed():void {
       super.landed();
       if (this.jumping) {
-        this.jumping = false;
-        this.jumpDamp = 1;
-
-        if (!this.secondJumping) {
-          this.canSecondJump = true;
-          this.secondJumpTimer.reset();
-          this.secondJumpTimer.start();
-        }
-
-        this.secondJumping = false;
+        this.resetJump();
       }
+      if (this.wallJumping) {
+        this.resetWallJump();
+      }
+      this.grabLocked = false;
     }
 
     override protected function falling():void {

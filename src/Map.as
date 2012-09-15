@@ -17,8 +17,6 @@ package {
     public var collisionsLayer:TmxLayer;
     public var tilesLayer:TmxLayer;
 
-    public var objectGroup:TmxObjectGroup;
-
     public var tileSize:uint;
     public var tilesWide:uint;
     public var tilesHigh:uint;
@@ -35,8 +33,6 @@ package {
 
       this.collisionsLayer = this.level.tmx.getLayer('collisions');
       this.tilesLayer = this.level.tmx.getLayer('tiles');
-
-      this.objectGroup = this.level.tmx.getObjectGroup('objects');
 
       this.tileSize = tileSize;
 
@@ -55,7 +51,7 @@ package {
       this.tilesWide = this.tiles[0].length;
 
       this.level.addChild(this);
-      this.createObjects(this.objectGroup.objects);
+      this.createObjects();
     }
 
     public function getTile(x:Number, y:Number):Tile {
@@ -155,7 +151,7 @@ package {
           }
 
           if (collisionIndex) {
-            this.collisions[y][x] = new Rectangle(xpos, ypos, this.tileSize, this.tileSize);
+            this.collisions[y][x] = new Rectangle(xpos, ypos, this.tileSize-1, this.tileSize-1);
           } else {
             this.collisions[y][x] = null;
           }
@@ -176,27 +172,32 @@ package {
       }
     }
 
-    private function createObjects(objects:Array):void {
-      var node:Node2D;
+    private function createObjects():void {
+      var objectGroups:Object = this.level.tmx.objectGroups
+        , objects:Array
+        , node:Node2D;
 
-      for each (var object:TmxObject in objects) {
-        switch (object.type) {
-          case 'Player':
-            node = new Player(this);
-            node.x = object.x;
-            node.y = object.y;
-            this.level.player = node as Player;
-            this.level.player.startPos.x = this.level.player.x;
-            this.level.player.startPos.y = this.level.player.y;
-            break;
-          default:
-            node = null;
-            break;
-        }
+      for each (var objectGroup:TmxObjectGroup in objectGroups) {
+        objects = objectGroup.objects;
+        for each (var object:TmxObject in objects) {
+          switch (object.type) {
+            case 'Player':
+              node = new Player(this);
+              node.x = object.x;
+              node.y = object.y;
+              this.level.player = node as Player;
+              this.level.player.startPos.x = this.level.player.x;
+              this.level.player.startPos.y = this.level.player.y;
+              break;
+            default:
+              node = null;
+              break;
+          }
 
-        if (node) {
-          this.objects.push(node);
-          this.level.addChild(node);
+          if (node) {
+            this.objects.push(node);
+            this.level.addChild(node);
+          }
         }
       }
     }

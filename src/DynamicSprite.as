@@ -83,15 +83,15 @@ package {
 
       this.vel.mulSelf(this.damp);
 
+      this.x += this.vel.x * dt;
+      if (this.map) {
+        this.collideMapX();
+      }
+
       this.y += this.vel.y * dt;
       if (this.map) {
         this.grounded = false;
         this.collideMapY();
-      }
-
-      this.x += this.vel.x * dt;
-      if (this.map) {
-        this.collideMapX();
       }
 
       if (Math.abs(this.vel.y) < 0.1) {

@@ -8,6 +8,8 @@ package {
   import flash.events.KeyboardEvent;
   import flash.events.MouseEvent;
 
+  import flash.utils.setTimeout;
+
   import net.hires.debug.Stats;
   import com.furusystems.dconsole2.DConsole;
 
@@ -35,15 +37,19 @@ package {
     }
     
     override protected function addedToStage(e:Event):void {
+      var self:Game = this;
+
       super.addedToStage(e);
       
       this.addChild(stats);
-      this.addChild(DConsole.view);
+      //this.addChild(DConsole.view);
       //DConsole.show();
 
       this.currentLevel = new Level('map2');
       this.setActiveScene(this.currentLevel);
-      this.start();
+      setTimeout(function():void {
+        self.start();
+      }, 1000);
     }
 
     protected function onLostFocus(e:Event):void {
