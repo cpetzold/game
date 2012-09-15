@@ -27,7 +27,7 @@ package {
     public var collisions:Array;
     public var tiles:Array;
 
-    [Embed(source='../data/tiles.png')]
+    [Embed(source='../data/tiletest.png')]
     protected var tilesetBMP:Class;
 
     public function Map(level:Level, tileSize:uint = 32) {
