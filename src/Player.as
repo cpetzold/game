@@ -100,7 +100,7 @@ package {
       this.ss.addAnimation('walk', [9,10,11,12,13,14,15], true);
       this.ss.addAnimation('quickwalk', [8,9,10,12,15], true);
 
-      this.ss.addAnimation('wallgrab', [48], false);
+      this.ss.addAnimation('wallgrab', [48,49], true);
 
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       this.ss.addAnimation('jump', [25,26,27], false); //Frozen on keyframe 1, missing transition
@@ -162,7 +162,7 @@ package {
       if (Input.kd('LEFT') && (this.grabLeft && this.grabLocked)) {
           if (vel.y > 10){ 
            if (grounded == false){
-           this.vel.y = 0; this.playAnimation('wallgrab', 20); }}
+           this.vel.y = 0; this.playAnimation('wallgrab', 10); }}
       } else if (Input.kd('RIGHT') && (this.grabRight && this.grabLocked)) {
           if (vel.y > 10){ 
             if (grounded == false){
