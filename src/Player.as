@@ -46,7 +46,6 @@ package {
       this.map = map;
 
       this.addAnimations();
-      this.spriteSheet.playAnimation('idle');
 
       this.grav = new Vec2(0, 2000);
       this.damp = new Vec2(1, 1);
