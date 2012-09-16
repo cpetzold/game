@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="40" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiletest" tilewidth="32" tileheight="32">
+  <image source="../tiletest.png" trans="000000" width="96" height="96"/>
+ </tileset>
+ <tileset firstgid="10" name="collisionTiles" tilewidth="32" tileheight="32">
+  <image source="../collisionTiles.png" width="128" height="32"/>
+ </tileset>
+ <layer name="tiles" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztmAEKwyAMReeU3f/IQ2ighGiiJvoLfRDm1Ha/SUzDygeXctn3slFmr9PuSZC+SFb0r+jz9pvEDv+1sDzfiL4d/uL09J3QwzkZXwuo+ih2EfosNdGaO6j+I7i+yHfBDE+uLwig6GvF5q4PoR5zUPzXYlXfaP83GiNU/1neHwj5iOo/4tVnw1L/EInUlx3uIenrnVuP3xxhd3ytNcu7f46qlZq+0zUa4fymztpsf5WV/V7/GyH4r8dOfTWOUf3VqXPi1d9r+TgLSv7V55POMYq+Fk/RR/lDloQ5vk7jLIz5p3ZdYnP0vWr73aywcRHm+V7LnpZp69X+B9MCxA==
+  </data>
+ </layer>
+ <layer name="collisions" width="40" height="40" opacity="0.34">
+  <data encoding="base64" compression="zlib">
+   eJztmNEKgDAIRXv2/z+4p0GMzZzpPIMujIJSz3S5kVxcSTe89pGS7j7avxbPY+u1z55Xi7Ejziy25R0rX8U8NL6qvD5VWV+LqHzyuGb0rzefK2uemL+mni9zL/Dan9pfCKLwaT1YXt6pFCV/M33lW7VfjUXNn2X/IHBT89f089lk6X9EZfJF+B3xaX5353p3fVfPSlF8mWuEVM9RfAKD9sxzvrLkPev7JWknnyeW1abyH1LE+T6rDpT1N+Og8M10Ch950HUD7bkGVQ==
+  </data>
+ </layer>
+ <objectgroup name="objects" width="40" height="40">
+  <object name="player" type="Player" x="672" y="256"/>
+ </objectgroup>
+</map>
