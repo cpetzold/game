@@ -51,9 +51,9 @@ package {
       this.damp = new Vec2(1, 1);
       this.hit = new Rectangle(24, 32, 16, 28);
 
-      this.walkSpeed = 600;
-      this.runSpeed = 1000;
-      this.turnDamp = 0.9;
+      this.walkSpeed = 620;
+      this.runSpeed = 820;
+      this.turnDamp = 0.6;
 
       this.jumpForce = 380;
       this.jumpSpeed = 100;
@@ -136,7 +136,7 @@ package {
       if (this.grabbingWall &&
           this.movingDown &&
           !this.running) {
-        this.vel.y *= 0.8;
+        this.vel.y *= 0.6;
       }
 
       // Flip sprite based on x velocity
