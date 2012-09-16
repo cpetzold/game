@@ -37,6 +37,8 @@ package {
     override protected function step(dt:Number):void {
       super.step(dt);
 
+      this.camera.zoom += ((2 - (1 * (this.player.vel.length() / 1000))) - this.camera.zoom) * 0.05;
+
       if (Input.kp('r')) {
         this.player.reset();
       }
