@@ -75,7 +75,7 @@ package {
       this.grabLeft = false;
       this.grabRight = false;
       this.grabLocked = false;
-      this.grabTimer = new Timer(200, 1);
+      this.grabTimer = new Timer(100, 1);
       this.grabTimer.addEventListener('timer', this.grabRelease);
 
       this.debug = true;

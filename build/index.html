@@ -6,7 +6,12 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 
     <script type="text/javascript">
-    swfobject.embedSWF("game.swf", "game", "100%", "100%", "11.4.0", null, null, { wmode: 'direct', allowFullScreen: true });
+      swfobject.embedSWF("game.swf", "game", "100%", "100%", "11.4.0", null, null, {
+          wmode: 'direct'
+        , quality: 'high'
+        , allowFullScreen: 'true'
+        , allowscriptaccess: 'sameDomain'
+      });
     </script>
 
     <style type="text/css">
