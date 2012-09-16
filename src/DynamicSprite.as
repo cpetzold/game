@@ -34,7 +34,7 @@ package {
       this.acc = new Vec2();
       this.grav = new Vec2();
       this.vel = new Vec2();
-      this.maxVel = new Vec2(1000, 800);
+      this.maxVel = new Vec2(2000, 800);
       this.damp = new Vec2(0.97, 9.97);
 
       this.grounded = false;

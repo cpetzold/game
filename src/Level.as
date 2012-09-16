@@ -19,7 +19,7 @@ package {
 
     public var events:EventDispatcher;
 
-    [Embed(source='../data/new.tmx', mimeType='application/octet-stream')]
+    [Embed(source='../data/maps/test-small.tmx', mimeType='application/octet-stream')]
     protected var mapFile:Class;
 
     public function Level(name:String) {
@@ -41,11 +41,16 @@ package {
         this.player.reset();
       }
 
-      //this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
-      //this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
+      this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
+      /*if (this.player.movingLeft) {
+        this.camera.x -= (this.camera.sceneWidth / 4);
+      } else if (this.player.movingRight) {
+        this.camera.x += (this.camera.sceneWidth / 4);
+      }*/
+      this.camera.y = this.player.y - (this.camera.sceneHeight / 2);
 
-      this.camera.x += ((this.player.x - (this.camera.sceneWidth / 2)) - this.camera.x) * 0.1;
-      this.camera.y += ((this.player.y - (this.camera.sceneHeight / 2)) - this.camera.y) * 0.1;
+      //this.camera.x += ((this.player.x - (this.camera.sceneWidth / 2)) - this.camera.x) * 0.1;
+      //this.camera.y += ((this.player.y - (this.camera.sceneHeight / 2)) - this.camera.y) * 0.1;
     }
 
   }

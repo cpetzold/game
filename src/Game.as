@@ -49,7 +49,7 @@ package {
       this.setActiveScene(this.currentLevel);
       setTimeout(function():void {
         self.start();
-      }, 1000);
+      }, 0);
     }
 
     protected function onLostFocus(e:Event):void {
