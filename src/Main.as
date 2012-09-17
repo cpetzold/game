@@ -24,6 +24,8 @@ package {
     public static var stats:Stats = new Stats();
     
     public function Main() {
+      super(Context3DRenderMode.AUTO, 60);
+      
       this.stage.scaleMode = StageScaleMode.NO_SCALE;
       this.stage.align = StageAlign.TOP_LEFT;
 
@@ -31,7 +33,6 @@ package {
       this.addEventListener(Event.ACTIVATE, this.onFocus);
 
       Input.initialize(this.stage, false);
-      super(Context3DRenderMode.AUTO, 60);
     }
     
     override protected function addedToStage(e:Event):void {
