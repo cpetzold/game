@@ -95,10 +95,12 @@ package {
 
     // Overriding original draw method to only draw visible tiles,
     // avoiding iteration over all tilles to determine visibility.
+    /* TEMP: Removed while figuring out zooming/size
     override protected function draw(context:Context3D, camera:Camera2D):void {
       this.children = this.getVisibleTiles(camera);
       super.draw(context, camera);
     }
+    */
 
     public function pointCheck(x:Number, y:Number):Boolean {
       return !!this.getCollisionTileAt(x, y);

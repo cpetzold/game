@@ -18,7 +18,7 @@ package {
 
   import Level;
 
-  [SWF(width="1024", height="768", frameRate="60", backgroundColor="#333333")]
+  [SWF(width="768", height="544", frameRate="60", backgroundColor="#333333")]
   public class Game extends World2D {
 
     protected var currentLevel:Level;
@@ -64,7 +64,7 @@ package {
       if (!this.isPaused) {
         this.pause();
       } else {
-        this.resume();    
+        this.resume();
       }
     }
 

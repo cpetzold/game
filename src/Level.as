@@ -34,13 +34,21 @@ package {
       this.map = new Map(this);
     }
 
+    protected function onMouseWheelMove(e:Event):void {
+      
+    }
+
     override protected function step(dt:Number):void {
       super.step(dt);
 
-      this.camera.zoom += ((2 - (1 * (this.player.vel.length() / 1000))) - this.camera.zoom) * 0.05;
-
       if (Input.kp('r')) {
         this.player.reset();
+      }
+
+      if (Input.kd('[')) {
+        this.camera.zoom = Math.max(0.1, this.camera.zoom - 0.01);
+      } else if (Input.kd(']')) {
+        this.camera.zoom = Math.min(3, this.camera.zoom + 0.01);
       }
 
       this.camera.x = this.player.x - (this.camera.sceneWidth / 2);
