@@ -87,10 +87,9 @@ package {
       }
     }
 
-    protected function playAnimation(name:String, fps:uint, frame:int = -1):void {
+    public function playAnimationAtFPS(name:String, fps:uint, frame:int = 0, restart:Boolean = false):void {
       if (fps) this.ss.setFps(fps);
-      if (frame > -1) this.ss.frame = frame;
-      this.ss.playAnimation(name);
+      super.playAnimation(name, frame, restart);
     }
 
     private function addAnimations():void {
@@ -168,31 +167,31 @@ package {
         if (avx > 5) {
           if (!this.moving || this.turning) {
             if (avx > 120) {
-              this.playAnimation('slide', 20);
+              this.playAnimationAtFPS('slide', 20);
             } else if (avx < 30) {
-              this.playAnimation('idle', 13);
+              this.playAnimationAtFPS('idle', 13);
             } else if (avx < 70) {
-              this.playAnimation('walk', 3);
+              this.playAnimationAtFPS('walk', 3);
             }
           } else if (avx > 300) {
-            this.playAnimation('run', 30);
+            this.playAnimationAtFPS('run', 30);
           } else {
             if (avx < 70) {
-              this.playAnimation('walk', 40);
+              this.playAnimationAtFPS('walk', 40);
             } else {
-              this.playAnimation('walk', 20);
+              this.playAnimationAtFPS('walk', 20);
             }
           }
         } else {
-          this.playAnimation('idle', 13);
+          this.playAnimationAtFPS('idle', 13);
         }
       } else {
         if (this.grabbingWall) {
-          this.playAnimation('wallgrab', 20);
+          this.playAnimationAtFPS('wallgrab', 20);
         } else if (this.movingDown) {
-          this.playAnimation('fall', 7);
+          this.playAnimationAtFPS('fall', 7);
         } else {
-          this.playAnimation('jump', 7, 2);
+          this.playAnimationAtFPS('jump', 7, 2);
         }
       }
 
@@ -202,7 +201,7 @@ package {
           this.jumping = true;
           this.jumpDamp = 1;
           this.vel.y = -this.jumpForce;
-          this.playAnimation('jump', 7);
+          this.playAnimationAtFPS('jump', 7);
         } else if (this.grabbingWall) {
           this.resetJump();
           this.wallJumping = true;
@@ -212,7 +211,7 @@ package {
           if (this.grabRight) {
             this.vel.x *= -1;
           }
-          this.playAnimation('jump', 7);
+          this.playAnimationAtFPS('jump', 7);
         }   
       }
 
@@ -265,7 +264,6 @@ package {
 
     override protected function falling():void {
       this.grounded = false;
-      this.spriteSheet.playAnimation('fall');
     }
 
     override protected function roof():void {

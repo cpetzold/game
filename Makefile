@@ -10,7 +10,7 @@ all: swf open
 debug: swf fdb
 
 swf:
-	$(MXMLC) $(FLAGS) -o $(SWF) ./src/Game.as
+	$(MXMLC) $(FLAGS) -o $(SWF) ./src/Main.as
 
 open:
 	open $(SWF)

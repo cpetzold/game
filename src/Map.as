@@ -12,7 +12,7 @@ package {
 
   public class Map extends Sprite2DBatch {
 
-    public var level:Level;
+    public var game:Game;
 
     public var collisionsLayer:TmxLayer;
     public var tilesLayer:TmxLayer;
@@ -28,11 +28,11 @@ package {
     [Embed(source='../data/tiletest.png')]
     protected var tilesetBMP:Class;
 
-    public function Map(level:Level, tileSize:uint = 32) {
-      this.level = level;
+    public function Map(game:Game, tileSize:uint = 32) {
+      this.game = game;
 
-      this.collisionsLayer = this.level.tmx.getLayer('collisions');
-      this.tilesLayer = this.level.tmx.getLayer('tiles');
+      this.collisionsLayer = this.game.tmx.getLayer('collisions');
+      this.tilesLayer = this.game.tmx.getLayer('tiles');
 
       this.tileSize = tileSize;
 
@@ -50,7 +50,7 @@ package {
       this.tilesHigh = this.tiles.length;
       this.tilesWide = this.tiles[0].length;
 
-      this.level.addChild(this);
+      this.game.addChild(this);
       this.createObjects();
     }
 
@@ -175,7 +175,7 @@ package {
     }
 
     private function createObjects():void {
-      var objectGroups:Object = this.level.tmx.objectGroups
+      var objectGroups:Object = this.game.tmx.objectGroups
         , objects:Array
         , node:Node2D;
 
@@ -187,9 +187,9 @@ package {
               node = new Player(this);
               node.x = object.x;
               node.y = object.y;
-              this.level.player = node as Player;
-              this.level.player.startPos.x = this.level.player.x;
-              this.level.player.startPos.y = this.level.player.y;
+              this.game.player = node as Player;
+              this.game.player.startPos.x = this.game.player.x;
+              this.game.player.startPos.y = this.game.player.y;
               break;
             default:
               node = null;
@@ -198,7 +198,7 @@ package {
 
           if (node) {
             this.objects.push(node);
-            this.level.addChild(node);
+            this.game.addChild(node);
           }
         }
       }
