@@ -25,7 +25,7 @@ package {
     
     public function Main() {
       super(Context3DRenderMode.AUTO, 60);
-      
+
       this.stage.scaleMode = StageScaleMode.NO_SCALE;
       this.stage.align = StageAlign.TOP_LEFT;
 
@@ -60,7 +60,6 @@ package {
     }
 
     public function togglePause():void {
-      trace('togglePause');
       if (!this.isPaused) {
         this.pause();
       } else {
@@ -69,7 +68,6 @@ package {
     }
 
     public function toggleFullscreen():void {
-      trace('toggleFullscreen');
       if (this.stage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE) {
         this.stage.displayState = StageDisplayState.NORMAL;
       } else {

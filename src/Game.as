@@ -23,6 +23,7 @@ package {
     protected var mapFile:Class;
 
     public function Game(name:String) {
+      super();
       this.events = new EventDispatcher();
       //this.loadMap(name);
 
