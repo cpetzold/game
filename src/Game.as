@@ -19,7 +19,7 @@ package {
 
     public var events:EventDispatcher;
 
-    [Embed(source='../data/maps/dots.tmx', mimeType='application/octet-stream')]
+    [Embed(source='../data/maps/test-small.tmx', mimeType='application/octet-stream')]
     protected var mapFile:Class;
 
     public function Game(name:String) {

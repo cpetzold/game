@@ -6,7 +6,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 
     <script type="text/javascript">
-      swfobject.embedSWF("game.swf", "game", "100%", "100%", "11.3.0", null, null, {
+      swfobject.embedSWF("game.swf", "game", "1024", "640", "11.3.0", null, null, {
           wmode: 'direct'
         , quality: 'high'
         , allowFullScreen: 'true'
@@ -20,6 +20,20 @@
         height: 100%;
         margin: 0;
         display: block;
+      }
+
+      body {
+        background: #222;
+      }
+
+      #game {
+        width: 1024px;
+        height: 640px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-top: -320px;
+        margin-left: -512px;
       }
     </style>
 

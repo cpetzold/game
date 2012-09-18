@@ -16,7 +16,7 @@ package {
   import de.nulldesign.nd2d.display.World2D;
   import de.nulldesign.nd2d.display.Scene2D;
 
-  [SWF(width="1440", height="900", frameRate="60", backgroundColor="#333333")]
+  [SWF(width="1024", height="640", frameRate="60", backgroundColor="#333333")]
   public class Main extends World2D {
 
     protected var current:Game;
@@ -44,7 +44,7 @@ package {
       //this.addChild(DConsole.view);
       //DConsole.show();
 
-      this.current = new Game('map2');
+      this.current = new Game('new');
       this.setActiveScene(this.current);
       setTimeout(function():void {
         self.start();
