@@ -35,7 +35,10 @@ package {
     public var running:Boolean;
     public var jumping:Boolean;
     public var wallJumping:Boolean;
-    public var wallJumpLeft:Boolean;
+
+
+    public var canWallJumpLeft:Boolean;
+    public var canWallJumpRight:Boolean;
 
     public var grabLeft:Boolean;
     public var grabRight:Boolean;
@@ -73,7 +76,10 @@ package {
       this.running = false;
       this.jumping = false;
       this.wallJumping = false;
-      this.wallJumpLeft = true;
+
+
+      this.canWallJumpLeft = true;
+      this.canWallJumpRight = true;
 
       this.grabLeft = false;
       this.grabRight = false;
@@ -220,7 +226,9 @@ package {
           this.jumpDamp = 1;
           this.vel.y = -this.jumpForce;
           this.playAnimationAtFPS('jump', 7);
-        } else if (this.grabbingWall) {
+        } else if (this.grabbingWall && 
+                   ((this.canWallJumpLeft && this.grabLeft) ||
+                    (this.canWallJumpRight && this.grabRight))) {
           this.resetJump();
           this.wallJumping = true;
           this.grabLocked = false;
@@ -229,6 +237,8 @@ package {
           if (this.grabRight) {
             this.vel.x *= -1;
           }
+          this.canWallJumpLeft = this.grabRight;
+          this.canWallJumpRight = this.grabLeft;
           this.playAnimationAtFPS('jump', 7);
         }   
       }
@@ -281,6 +291,8 @@ package {
       if (this.wallJumping) {
         this.resetWallJump();
       }
+      this.canWallJumpLeft = true;
+      this.canWallJumpRight = true;
       this.grabLocked = false;
     }
 
