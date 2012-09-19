@@ -147,9 +147,9 @@ package {
       }
 
       // Flip sprite based on x velocity
-      if (this.movingLeft) {
+      if (this.movingLeft || this.grabLeft) {
         this.scaleX = -1;
-      } else if (this.movingRight) {
+      } else if (this.movingRight || this.grabRight) {
         this.scaleX = 1;
       }
 
