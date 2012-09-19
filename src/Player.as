@@ -35,6 +35,7 @@ package {
     public var running:Boolean;
     public var jumping:Boolean;
     public var wallJumping:Boolean;
+    public var wallJumpLeft:Boolean;
 
     public var grabLeft:Boolean;
     public var grabRight:Boolean;
@@ -72,6 +73,7 @@ package {
       this.running = false;
       this.jumping = false;
       this.wallJumping = false;
+      this.wallJumpLeft = true;
 
       this.grabLeft = false;
       this.grabRight = false;
@@ -106,7 +108,7 @@ package {
       this.ss.addAnimation('fall', [32,33,34,35,36], false);
       this.ss.addAnimation('slide', [40,41,42,43,44], false);
       this.ss.addAnimation('wallgrab', [48,49], true);
-      this.ss.addAnimation('wallrelease', [], false);
+      this.ss.addAnimation('wallrelease', [56,57], false);
       this.ss.addAnimation('wallrun', [64,65,66,67], true);
       this.spriteSheet = this.ss;
     }
@@ -194,9 +196,13 @@ package {
       } else {
         if (this.grabbingWall) {
           if (this.vel.y >= -250) {
-            this.playAnimationAtFPS('wallgrab', 20);
+            if (this.grabLocked && this.grabTimer.running) {
+              this.playAnimationAtFPS('wallrelease', 7);
+            } else {
+              this.playAnimationAtFPS('wallgrab', 20);
+            }
           } else {
-            this.playAnimationAtFPS('wallrun', 10);
+            this.playAnimationAtFPS('wallrun', 13);
           }
         } else if (this.movingDown) {
           this.playAnimationAtFPS('fall', 7);
