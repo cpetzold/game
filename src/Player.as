@@ -53,7 +53,7 @@ package {
 
       this.walkSpeed = 620;
       this.runSpeed = 820;
-      this.turnDamp = 0.6;
+      this.turnDamp = 0.8;
 
       this.jumpForce = 380;
       this.jumpSpeed = 100;
@@ -261,6 +261,8 @@ package {
     override protected function landed():void {
       super.landed();
       if (this.jumping) {
+        this.acc.x = 0;
+        this.vel.x *= 0.15;
         this.resetJump();
       }
       if (this.wallJumping) {
