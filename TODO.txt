@@ -1,0 +1,17 @@
+
+==== Animation Sprites ====
+
+Land on ground animation (Body Squish)
+Debris wall grab
+Debris Slide
+Grab the ledge animation
+Climb up from ledge
+
+
+==== Programming ====
+
+Dive - Rotate the final sprite when falling in the direction of the fall. 
+     - Limit the rotation to 45* degrees downward, so its impossible to go 100% headfirst into the ground.
+Slide to get up.
+Wall jump limited to (right to left / left to right)
+
