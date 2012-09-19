@@ -10,7 +10,7 @@ package {
 
   public class Player extends DynamicSprite {
 
-    [Embed(source='../data/spritesheet.png')]
+    [Embed(source='../data/spritesheet_32.png')]
     protected var PlayerBMP:Class;
 
     public var ss:DynamicSpriteSheet;
@@ -99,6 +99,7 @@ package {
       this.ss.addAnimation('quickwalk', [8,9,10,12,15], true);
 
       this.ss.addAnimation('wallgrab', [48,49], true);
+      this.ss.addAnimation('wallrun', [64,65,66,67], true);
 
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       this.ss.addAnimation('jump', [25,26,27], false); //Frozen on keyframe 1, missing transition
@@ -187,13 +188,19 @@ package {
         }
       } else {
         if (this.grabbingWall) {
-          this.playAnimationAtFPS('wallgrab', 20);
+          if (this.vel.y >= -250) {
+            this.playAnimationAtFPS('wallgrab', 20);
+          } else {
+            this.playAnimationAtFPS('wallrun', 13);
+          }
         } else if (this.movingDown) {
           this.playAnimationAtFPS('fall', 7);
         } else {
           this.playAnimationAtFPS('jump', 7, 2);
         }
       }
+
+      
 
       // Jumping
       if (Input.kp('SPACE')) {

@@ -77,9 +77,15 @@ package {
 
     override protected function mainLoop(e:Event):void {
       super.mainLoop(e);
+      stats.update(statsObject.totalDrawCalls, statsObject.totalTris);
+    }
+
+    override protected function step(dt:Number, t:Number):void {
+      super.step(dt, t);
+
       if (Input.kp('ESC')) this.togglePause();
       if (Input.kp('F')) this.toggleFullscreen();
-      stats.update(statsObject.totalDrawCalls, statsObject.totalTris);
+
       Input.clear();
     }
 
