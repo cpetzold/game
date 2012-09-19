@@ -21,6 +21,7 @@ package {
 
     public var jumpForce:Number;
     public var jumpSpeed:Number;
+    public var jumpWallSpeed:Number;
     public var jumpDamp:Number;
     public var jumpDampRate:Number;
 
@@ -57,6 +58,7 @@ package {
 
       this.jumpForce = 380;
       this.jumpSpeed = 100;
+      this.jumpWallSpeed = 150;
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
@@ -97,14 +99,15 @@ package {
       this.ss.addAnimation('idle', [0,1,2,3], true); 
       this.ss.addAnimation('walk', [9,10,11,12,13,14,15], true);
       this.ss.addAnimation('quickwalk', [8,9,10,12,15], true);
-
-      this.ss.addAnimation('wallgrab', [48,49], true);
-      this.ss.addAnimation('wallrun', [64,65,66,67], true);
-
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
-      this.ss.addAnimation('jump', [25,26,27], false); //Frozen on keyframe 1, missing transition
-      this.ss.addAnimation('fall', [32,33,34,35,36], false); // Frozen on keyframe 2, missing transition
+      // Frozen on keyframe 1, missing transition
+      this.ss.addAnimation('jump', [25,26,27], false); 
+      // Frozen on keyframe 2, missing transition
+      this.ss.addAnimation('fall', [32,33,34,35,36], false);
       this.ss.addAnimation('slide', [40,41,42,43,44], false);
+      this.ss.addAnimation('wallgrab', [48,49], true);
+      this.ss.addAnimation('wallrelease', [], false);
+      this.ss.addAnimation('wallrun', [64,65,66,67], true);
       this.spriteSheet = this.ss;
     }
 
@@ -113,7 +116,8 @@ package {
         , bounds:Rectangle = this.bounds
         , midY:Number = bounds.top + (bounds.height / 2)
         , leftPressed:Boolean = Input.kd('LEFT')
-        , rightPressed:Boolean = Input.kd('RIGHT');
+        , rightPressed:Boolean = Input.kd('RIGHT')
+        , downPressed:Boolean = Input.kd('DOWN');
 
       this.moving = false;
       this.running = Input.kd('SHIFT');
@@ -135,7 +139,8 @@ package {
       // TEST: Wall slide
       if (this.grabbingWall &&
           this.movingDown &&
-          !this.running) {
+          !this.running &&
+          !downPressed) {
         this.vel.y *= 0.6;
       }
 
@@ -191,7 +196,7 @@ package {
           if (this.vel.y >= -250) {
             this.playAnimationAtFPS('wallgrab', 20);
           } else {
-            this.playAnimationAtFPS('wallrun', 13);
+            this.playAnimationAtFPS('wallrun', 10);
           }
         } else if (this.movingDown) {
           this.playAnimationAtFPS('fall', 7);
@@ -223,9 +228,11 @@ package {
       }
 
       // More height while the key is held down
+      var jumpSpeed:Number;
       if (Input.kd('SPACE') && this.movingUp) {
         if (this.jumping) {
-          this.vel.y -= (this.jumpSpeed * this.jumpDamp);
+          jumpSpeed = this.grabbingWall ? this.jumpWallSpeed : this.jumpSpeed;
+          this.vel.y -= (jumpSpeed * this.jumpDamp);
           this.jumpDamp *= this.jumpDampRate;
         } else if (this.wallJumping) {
           this.vel.y -= (this.wallJumpSpeed * this.wallJumpDamp);
