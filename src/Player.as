@@ -10,7 +10,7 @@ package {
 
   public class Player extends DynamicSprite {
 
-    [Embed(source='../data/spritesheet_32.png')]
+    [Embed(source='../data/spritesheet.png')]
     protected var PlayerBMP:Class;
 
     public var ss:DynamicSpriteSheet;
@@ -44,7 +44,9 @@ package {
     public var grabRight:Boolean;
     public var grabLocked:Boolean;
     public var grabTimer:Timer;
-    public var landTimer:Timer; // Land Animation
+
+    public var landTimer:Timer; // Test Land Animation
+    public var landAnim:Boolean; // Am I running the land animation?
 
     public function Player(map:Map) {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
@@ -78,6 +80,8 @@ package {
       this.jumping = false;
       this.wallJumping = false;
 
+      this.landAnim = false; // Test land
+
 
       this.canWallJumpLeft = true;
       this.canWallJumpRight = true;
@@ -88,6 +92,9 @@ package {
       this.grabTimer = new Timer(100, 1);
       this.grabTimer.addEventListener('timer', this.grabRelease);
 
+      this.landTimer = new Timer(100, 1); // Test Land
+      this.landTimer.addEventListener('land', this.landAnimF);//Test Land
+
       this.debug = true;
     }
 
@@ -97,6 +104,10 @@ package {
         this.x += 1;
       }
     }
+
+    protected function landAnimF(e:Event):void {
+      this.landAnim = false;
+      }
 
     public function playAnimationAtFPS(name:String, fps:uint, frame:int = 0, restart:Boolean = false):void {
       if (fps) this.ss.setFps(fps);
@@ -111,7 +122,7 @@ package {
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       // Frozen on keyframe 1, missing transition
       this.ss.addAnimation('jump', [25,26,27], false); 
-      this.ss.addAnimation('land', [96,97,98], false); 
+      this.ss.addAnimation('land', [96,97,98,99], false); 
       // Frozen on keyframe 2, missing transition
       this.ss.addAnimation('fall', [32,33,34,35,36], false);
       this.ss.addAnimation('slide', [40,41,42,43,44], false);
@@ -193,13 +204,13 @@ package {
             this.playAnimationAtFPS('run', 30);
           } else {
             if (avx < 70) {
-              this.playAnimationAtFPS('walk', 40);
+              if (avx < 40) { if (landAnim == true) { this.playAnimationAtFPS('land', 15); } else { this.playAnimationAtFPS('walk', 40);} }
             } else {
               this.playAnimationAtFPS('walk', 20);
             }
           }
         } else {
-          this.playAnimationAtFPS('idle', 13);
+          if (landAnim == true) { this.playAnimationAtFPS('land', 15); } else { this.playAnimationAtFPS('idle', 13); }
         }
       } else {
         if (this.grabbingWall) {
@@ -224,6 +235,9 @@ package {
       // Jumping
       if (Input.kp('SPACE')) {
         if (this.grounded) {
+          this.grabTimer.reset(); // Land Anim
+          this.landAnim = false; // Land Anim
+
           this.jumping = true;
           this.jumpDamp = 1;
           this.vel.y = -this.jumpForce;
@@ -289,6 +303,8 @@ package {
         this.acc.x = 0;
         this.vel.x *= 0.15;
         this.resetJump();
+
+        if (!this.landTimer.running) {this.landTimer.start(); this.landAnim = true;} // TEST START TIMER
       }
       if (this.wallJumping) {
         this.resetWallJump();
