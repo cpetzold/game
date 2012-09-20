@@ -44,6 +44,7 @@ package {
     public var grabRight:Boolean;
     public var grabLocked:Boolean;
     public var grabTimer:Timer;
+    public var landTimer:Timer; // Land Animation
 
     public function Player(map:Map) {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
@@ -110,6 +111,7 @@ package {
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
       // Frozen on keyframe 1, missing transition
       this.ss.addAnimation('jump', [25,26,27], false); 
+      this.ss.addAnimation('land', [96,97,98], false); 
       // Frozen on keyframe 2, missing transition
       this.ss.addAnimation('fall', [32,33,34,35,36], false);
       this.ss.addAnimation('slide', [40,41,42,43,44], false);
