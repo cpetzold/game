@@ -25,7 +25,7 @@ package {
     public var jumpDamp:Number;
     public var jumpDampRate:Number;
 
-    public var wallJumpForce:Number;
+    public var wallJumpForce:Vec2;
     public var wallJumpSpeed:Number;
     public var wallJumpDamp:Number;
     public var wallJumpDampRate:Number;
@@ -35,18 +35,14 @@ package {
     public var running:Boolean;
     public var jumping:Boolean;
     public var wallJumping:Boolean;
+    public var landing:Boolean;
 
-
-    public var canWallJumpLeft:Boolean;
-    public var canWallJumpRight:Boolean;
+    public var landTimer:Timer;
 
     public var grabLeft:Boolean;
     public var grabRight:Boolean;
     public var grabLocked:Boolean;
     public var grabTimer:Timer;
-
-    public var landTimer:Timer; // Test Land Animation
-    public var landAnim:Boolean; // Am I running the land animation?
 
     public function Player(map:Map) {
       var texture:Texture2D = Texture2D.textureFromBitmapData(new PlayerBMP().bitmapData);
@@ -69,7 +65,7 @@ package {
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.wallJumpForce = 380;
+      this.wallJumpForce = new Vec2(450, 380);
       this.wallJumpSpeed = 100;
       this.wallJumpDamp = 1;
       this.wallJumpDampRate = 0.8;
@@ -79,12 +75,7 @@ package {
       this.running = false;
       this.jumping = false;
       this.wallJumping = false;
-
-      this.landAnim = false; // Test land
-
-
-      this.canWallJumpLeft = true;
-      this.canWallJumpRight = true;
+      this.landing = false;
 
       this.grabLeft = false;
       this.grabRight = false;
@@ -92,8 +83,8 @@ package {
       this.grabTimer = new Timer(100, 1);
       this.grabTimer.addEventListener('timer', this.grabRelease);
 
-      this.landTimer = new Timer(100, 1); // Test Land
-      this.landTimer.addEventListener('land', this.landAnimF);//Test Land
+      this.landTimer = new Timer(100, 1);
+      this.landTimer.addEventListener('timer', this.doneLanding);
 
       this.debug = true;
     }
@@ -105,9 +96,9 @@ package {
       }
     }
 
-    protected function landAnimF(e:Event):void {
-      this.landAnim = false;
-      }
+    protected function doneLanding(e:Event):void {
+      this.landing = false;
+    }
 
     public function playAnimationAtFPS(name:String, fps:uint, frame:int = 0, restart:Boolean = false):void {
       if (fps) this.ss.setFps(fps);
@@ -142,9 +133,9 @@ package {
 
       this.moving = false;
       this.running = Input.kd('SHIFT');
-      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top)
+      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top + 20)
                                       || this.map.pointCheck(bounds.left - 1, bounds.bottom));
-      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top)
+      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 20)
                                       || this.map.pointCheck(bounds.right, bounds.bottom));
 
       if (leftPressed && !(this.grabRight && this.grabLocked)) {
@@ -190,8 +181,11 @@ package {
         this.grabTimer.start();
       }
 
+      // Animations
       if (this.grounded) {
-        if (avx > 5) {
+        if (this.landing) {
+          this.playAnimationAtFPS('land', 15);
+        } else if (avx > 5) {
           if (!this.moving || this.turning) {
             if (avx > 120) {
               this.playAnimationAtFPS('slide', 20);
@@ -204,13 +198,15 @@ package {
             this.playAnimationAtFPS('run', 30);
           } else {
             if (avx < 70) {
-              if (avx < 40) { if (landAnim == true) { this.playAnimationAtFPS('land', 15); } else { this.playAnimationAtFPS('walk', 40);} }
+              if (avx < 40) {
+                this.playAnimationAtFPS('walk', 40);
+              }
             } else {
               this.playAnimationAtFPS('walk', 20);
             }
           }
         } else {
-          if (landAnim == true) { this.playAnimationAtFPS('land', 15); } else { this.playAnimationAtFPS('idle', 13); }
+          this.playAnimationAtFPS('idle', 13);
         }
       } else {
         if (this.grabbingWall) {
@@ -230,31 +226,24 @@ package {
         }
       }
 
-      
-
       // Jumping
       if (Input.kp('SPACE')) {
         if (this.grounded) {
-          this.grabTimer.reset(); // Land Anim
-          this.landAnim = false; // Land Anim
-
+          this.grabTimer.reset();
+          this.landing = false;
           this.jumping = true;
           this.jumpDamp = 1;
           this.vel.y = -this.jumpForce;
           this.playAnimationAtFPS('jump', 7);
-        } else if (this.grabbingWall && 
-                   ((this.canWallJumpLeft && this.grabLeft) ||
-                    (this.canWallJumpRight && this.grabRight))) {
+        } else if (this.grabbingWall) {
           this.resetJump();
           this.wallJumping = true;
           this.grabLocked = false;
-          this.vel.y = -this.wallJumpForce;
-          this.vel.x = this.wallJumpForce;
+          this.vel.y = -this.wallJumpForce.y;
+          this.vel.x = this.wallJumpForce.x;
           if (this.grabRight) {
             this.vel.x *= -1;
           }
-          this.canWallJumpLeft = this.grabRight;
-          this.canWallJumpRight = this.grabLeft;
           this.playAnimationAtFPS('jump', 7);
         }   
       }
@@ -297,29 +286,34 @@ package {
       this.wallJumpDamp = 1;
     }
 
-    override protected function landed():void {
-      super.landed();
-      if (this.jumping) {
-        this.acc.x = 0;
-        this.vel.x *= 0.15;
-        this.resetJump();
-
-        if (!this.landTimer.running) {this.landTimer.start(); this.landAnim = true;} // TEST START TIMER
+    override protected function landed(offset:Number):void {
+      if (!this.landTimer.running && this.vel.y > 200) {
+        this.landing = true;
+        this.landTimer.start();
       }
+
+      if (this.jumping) {
+        this.resetJump();
+      }
+
       if (this.wallJumping) {
         this.resetWallJump();
       }
-      this.canWallJumpLeft = true;
-      this.canWallJumpRight = true;
+
       this.grabLocked = false;
+
+      super.landed(offset);
+    }
+
+    override protected function roof(offset:Number):void {
+      this.jumpDamp = 0;
+      super.roof(offset);
     }
 
     override protected function falling():void {
       this.grounded = false;
-    }
 
-    override protected function roof():void {
-      this.jumpDamp = 0;
+      super.falling();
     }
 
   }

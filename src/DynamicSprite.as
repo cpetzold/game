@@ -143,9 +143,7 @@ package {
         }
 
         if (offset) {
-          this.vel.y = 0;
-          this.y -= offset;
-          this.landed();
+          this.landed(offset);
         }
       } else if (this.movingUp) {
         if (offsets[0] && offsets[0].height) {
@@ -155,9 +153,7 @@ package {
         }
 
         if (offset) {
-          this.vel.y = 0;
-          this.y += offset;
-          this.roof();  
+          this.roof(offset);
         }
       } else {
         if (!offsets[2] && !offsets[3]) {
@@ -166,10 +162,15 @@ package {
       }
     }
 
-    protected function landed():void {
+    protected function landed(offset:Number):void {
+      this.vel.y = 0;
+      this.y -= offset;
       this.grounded = true;
     }
-    protected function roof():void {}
+    protected function roof(offset:Number):void {
+      this.vel.y = 0;
+      this.y += offset;
+    }
     protected function falling():void {}
 
     public function collideMapOffsets():Array {
