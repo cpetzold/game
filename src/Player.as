@@ -153,7 +153,7 @@ package {
       this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 5)
                                       || this.map.pointCheck(bounds.right, bounds.bottom - 5));
 
-      if (!this.sliding) {
+      if (!(this.sliding || this.diving)) {
         if (leftPressed && !(this.grabRight && this.grabLocked)) {
           this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
           this.moving = true;
@@ -179,7 +179,7 @@ package {
         this.scaleX = 1;
       }
 
-      if (!this.moving || this.turning) {
+      if (this.grounded && (!this.moving || this.turning)) {
         this.vel.x *= (avx > 30) ? this.turnDamp : 0;
       }
 
