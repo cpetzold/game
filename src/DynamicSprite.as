@@ -70,6 +70,8 @@ package {
     }
 
     override protected function step(dt:Number):void {
+      var collidedX:Boolean = false
+        , collidedY:Boolean = false;
 
       this.vel.addSelf(this.acc.scale(dt));
 
@@ -85,13 +87,17 @@ package {
 
       this.x += this.vel.x * dt;
       if (this.map) {
-        this.collideMapX();
+        collidedX = this.collideMapX();
       }
 
       this.y += this.vel.y * dt;
       if (this.map) {
         this.grounded = false;
-        this.collideMapY();
+        collidedY = this.collideMapY();
+      }
+
+      if (collidedX || collidedY) {
+        this.collided();
       }
 
       if (Math.abs(this.vel.y) < 0.1) {
@@ -107,7 +113,7 @@ package {
       super.step(dt);
     }
 
-    public function collideMapX():void {
+    public function collideMapX():Boolean {
       var offsets:Array = this.collideMapOffsets()
         , offset:Number;
 
@@ -128,10 +134,12 @@ package {
       if (offset) {
         this.vel.x = 0;
         this.x += offset;
+        return true;
       }
+      return false;
     }
 
-    public function collideMapY():void {
+    public function collideMapY():Boolean {
       var offsets:Array = this.collideMapOffsets()
         , offset:Number;
 
@@ -144,6 +152,7 @@ package {
 
         if (offset) {
           this.landed(offset);
+          return true;
         }
       } else if (this.movingUp) {
         if (offsets[0] && offsets[0].height) {
@@ -154,12 +163,18 @@ package {
 
         if (offset) {
           this.roof(offset);
+          return true;
         }
       } else {
         if (!offsets[2] && !offsets[3]) {
           this.falling();
         }
       }
+      return false;
+    }
+
+    protected function collided():void {
+
     }
 
     protected function landed(offset:Number):void {
@@ -167,10 +182,12 @@ package {
       this.y -= offset;
       this.grounded = true;
     }
+
     protected function roof(offset:Number):void {
       this.vel.y = 0;
       this.y += offset;
     }
+
     protected function falling():void {}
 
     public function collideMapOffsets():Array {

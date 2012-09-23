@@ -30,12 +30,17 @@ package {
     public var wallJumpDamp:Number;
     public var wallJumpDampRate:Number;
 
+    public var diveForce:Vec2;
+    //public var diveForceMax:Vec2;
+
     public var moving:Boolean;
     public var turning:Boolean;
     public var running:Boolean;
     public var jumping:Boolean;
     public var wallJumping:Boolean;
     public var landing:Boolean;
+    public var diving:Boolean;
+    public var sliding:Boolean;
 
     public var landTimer:Timer;
 
@@ -65,10 +70,13 @@ package {
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.wallJumpForce = new Vec2(450, 380);
+      this.wallJumpForce = new Vec2(450, -380);
       this.wallJumpSpeed = 100;
       this.wallJumpDamp = 1;
       this.wallJumpDampRate = 0.8;
+
+      this.diveForce = new Vec2(400, -400);
+      //this.diveForceMax = new Vec2();
 
       this.moving = false;
       this.turning = false;
@@ -76,6 +84,8 @@ package {
       this.jumping = false;
       this.wallJumping = false;
       this.landing = false;
+      this.diving = false;
+      this.sliding = false;
 
       this.grabLeft = false;
       this.grabRight = false;
@@ -116,10 +126,13 @@ package {
       this.ss.addAnimation('land', [96,97,98,99], false); 
       // Frozen on keyframe 2, missing transition
       this.ss.addAnimation('fall', [32,33,34,35,36], false);
-      this.ss.addAnimation('slide', [40,41,42,43,44], false);
+      this.ss.addAnimation('turn', [40,41,42,43,44], false);
       this.ss.addAnimation('wallgrab', [48,49], true);
       this.ss.addAnimation('wallrelease', [56,57], false);
       this.ss.addAnimation('wallrun', [64,65,66,67], true);
+      this.ss.addAnimation('slidedive', [72,73,74,75,76], false);
+      this.ss.addAnimation('slide', [80,81], true);
+      this.ss.addAnimation('slideup', [89,90], false);
       this.spriteSheet = this.ss;
     }
 
@@ -133,22 +146,23 @@ package {
 
       this.moving = false;
       this.running = Input.kd('SHIFT');
-      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top + 20)
-                                      || this.map.pointCheck(bounds.left - 1, bounds.bottom));
-      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 20)
-                                      || this.map.pointCheck(bounds.right, bounds.bottom));
+      this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top + 5)
+                                      || this.map.pointCheck(bounds.left - 1, bounds.bottom - 5));
+      this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 5)
+                                      || this.map.pointCheck(bounds.right, bounds.bottom - 5));
 
-      if (leftPressed && !(this.grabRight && this.grabLocked)) {
-        this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
-        this.moving = true;
-        this.turning = this.movingRight;
-      } else if (rightPressed && !(this.grabLeft && this.grabLocked)) {
-        this.acc.x = (this.running ? this.runSpeed : this.walkSpeed) + 100;
-        this.moving = true;
-        this.turning = this.movingLeft;
+      if (!this.sliding) {
+        if (leftPressed && !(this.grabRight && this.grabLocked)) {
+          this.acc.x = -(this.running ? this.runSpeed : this.walkSpeed);
+          this.moving = true;
+          this.turning = this.movingRight;
+        } else if (rightPressed && !(this.grabLeft && this.grabLocked)) {
+          this.acc.x = (this.running ? this.runSpeed : this.walkSpeed) + 100;
+          this.moving = true;
+          this.turning = this.movingLeft;
+        }
       }
 
-      // TEST: Wall slide
       if (this.grabbingWall &&
           this.movingDown &&
           !this.running &&
@@ -181,14 +195,20 @@ package {
         this.grabTimer.start();
       }
 
+      if (this.sliding && avx < 50) {
+        this.sliding = false;
+      }
+
       // Animations
       if (this.grounded) {
-        if (this.landing) {
+        if (this.sliding && avx > 50) {
+          this.playAnimationAtFPS('slide', 13);
+        } else if (this.landing) {
           this.playAnimationAtFPS('land', 15);
         } else if (avx > 5) {
           if (!this.moving || this.turning) {
             if (avx > 120) {
-              this.playAnimationAtFPS('slide', 20);
+              this.playAnimationAtFPS('turn', 20);
             } else if (avx < 30) {
               this.playAnimationAtFPS('idle', 13);
             } else if (avx < 70) {
@@ -219,6 +239,8 @@ package {
           } else {
             this.playAnimationAtFPS('wallrun', 13);
           }
+        } else if (this.diving) {
+          this.playAnimationAtFPS('slidedive', 13);
         } else if (this.movingDown) {
           this.playAnimationAtFPS('fall', 7);
         } else {
@@ -232,6 +254,7 @@ package {
           this.grabTimer.reset();
           this.landing = false;
           this.jumping = true;
+          this.sliding = false;
           this.jumpDamp = 1;
           this.vel.y = -this.jumpForce;
           this.playAnimationAtFPS('jump', 7);
@@ -239,8 +262,8 @@ package {
           this.resetJump();
           this.wallJumping = true;
           this.grabLocked = false;
-          this.vel.y = -this.wallJumpForce.y;
-          this.vel.x = this.wallJumpForce.x;
+          this.sliding = false;
+          this.vel = this.wallJumpForce.clone();
           if (this.grabRight) {
             this.vel.x *= -1;
           }
@@ -258,6 +281,16 @@ package {
         } else if (this.wallJumping) {
           this.vel.y -= (this.wallJumpSpeed * this.wallJumpDamp);
           this.wallJumpDamp *= this.wallJumpDampRate;
+        }
+      }
+
+      // Dive
+      if (this.grounded && Input.kp('x')) {
+        if (!this.diving && avx > 50) {
+          this.diving = true;
+          this.vel.y = this.diveForce.y;
+          this.vel.x += (this.movingLeft ? -this.diveForce.x : this.diveForce.x);
+          this.playAnimationAtFPS('slidedive', 13);
         }
       }
 
@@ -284,6 +317,15 @@ package {
     protected function resetWallJump():void {
       this.wallJumping = false;
       this.wallJumpDamp = 1;
+    }
+
+    override protected function collided():void {
+      if (this.diving) {
+        this.diving = false;
+        if (this.grounded) {
+          this.sliding = true;
+        }
+      }
     }
 
     override protected function landed(offset:Number):void {

@@ -84,7 +84,7 @@ package {
       super.step(dt, t);
 
       if (Input.kp('ESC')) this.togglePause();
-      if (Input.kp('F')) this.toggleFullscreen();
+      // if (Input.kp('F')) this.toggleFullscreen();
 
       Input.clear();
     }
