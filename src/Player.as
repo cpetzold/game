@@ -31,6 +31,7 @@ package {
     public var wallJumpDampRate:Number;
 
     public var diveForce:Vec2;
+    public var canDive:Boolean;
     //public var diveForceMax:Vec2;
 
     public var moving:Boolean;
@@ -76,6 +77,7 @@ package {
       this.wallJumpDampRate = 0.8;
 
       this.diveForce = new Vec2(400, -400);
+      this.canDive = true;
       //this.diveForceMax = new Vec2();
 
       this.moving = false;
@@ -121,10 +123,10 @@ package {
       this.ss.addAnimation('walk', [9,10,11,12,13,14,15], true);
       this.ss.addAnimation('quickwalk', [8,9,10,12,15], true);
       this.ss.addAnimation('run', [16,17,18,19,20,21,22], true);
-      // Frozen on keyframe 1, missing transition
+      // 
       this.ss.addAnimation('jump', [25,26,27], false); 
       this.ss.addAnimation('land', [96,97,98,99], false); 
-      // Frozen on keyframe 2, missing transition
+      // 
       this.ss.addAnimation('fall', [32,33,34,35,36], false);
       this.ss.addAnimation('turn', [40,41,42,43,44], false);
       this.ss.addAnimation('wallgrab', [48,49], true);
@@ -202,6 +204,7 @@ package {
       // Animations
       if (this.grounded) {
         if (this.sliding && avx > 50) {
+          this.turnDamp = 0.93;
           this.playAnimationAtFPS('slide', 13);
         } else if (this.landing) {
           this.playAnimationAtFPS('land', 15);
@@ -209,24 +212,31 @@ package {
           if (!this.moving || this.turning) {
             if (avx > 120) {
               this.playAnimationAtFPS('turn', 20);
+              this.turnDamp = 0.8;
             } else if (avx < 30) {
               this.playAnimationAtFPS('idle', 13);
+              this.turnDamp = 0.8;
             } else if (avx < 70) {
               this.playAnimationAtFPS('walk', 3);
+              this.turnDamp = 0.8;
             }
           } else if (avx > 300) {
             this.playAnimationAtFPS('run', 30);
+            this.turnDamp = 0.8;
           } else {
             if (avx < 70) {
               if (avx < 40) {
                 this.playAnimationAtFPS('walk', 40);
+                this.turnDamp = 0.8;
               }
             } else {
               this.playAnimationAtFPS('walk', 20);
+              this.turnDamp = 0.8;
             }
           }
         } else {
           this.playAnimationAtFPS('idle', 13);
+          this.turnDamp = 0.8;
         }
       } else {
         if (this.grabbingWall) {
@@ -285,12 +295,13 @@ package {
       }
 
       // Dive
-      if (this.grounded && Input.kp('x')) {
-        if (!this.diving && avx > 50) {
+      if (this.canDive && Input.kp('x') && !this.sliding) {
+        if (!this.diving && avx > 35) {
           this.diving = true;
           this.vel.y = this.diveForce.y;
           this.vel.x += (this.movingLeft ? -this.diveForce.x : this.diveForce.x);
           this.playAnimationAtFPS('slidedive', 13);
+          this.canDive = false;
         }
       }
 
@@ -332,6 +343,7 @@ package {
       if (!this.landTimer.running && this.vel.y > 200) {
         this.landing = true;
         this.landTimer.start();
+        this.canDive = true;
       }
 
       if (this.jumping) {
