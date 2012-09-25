@@ -179,8 +179,12 @@ package {
         this.scaleX = 1;
       }
 
-      if (this.grounded && (!this.moving || this.turning)) {
-        this.vel.x *= (avx > 30) ? this.turnDamp : 0;
+
+      if (this.diving){
+            if (this.grounded && (!this.moving || this.turning)) { this.vel.x *= (avx > 30) ? this.turnDamp : 0; }
+      } else {
+            //if  (!this.moving || this.turning) { this.vel.x *= (avx > 30) ? this.turnDamp : 0; }
+           if  (!this.moving || this.turning) { this.vel.x *=  this.turnDamp; }
       }
 
       if (this.grabbingWall &&
