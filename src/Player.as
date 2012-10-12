@@ -150,7 +150,7 @@ package {
         , downPressed:Boolean = Input.kd('DOWN');
 
       this.moving = false;
-      this.running = Input.kd('SHIFT');
+      //this.running = Input.kd('SHIFT');
       this.grabLeft = !this.grounded && (this.map.pointCheck(bounds.left - 1, bounds.top + 5)
                                       || this.map.pointCheck(bounds.left - 1, bounds.bottom - 5));
       this.grabRight = !this.grounded && (this.map.pointCheck(bounds.right, bounds.top + 5)
@@ -182,12 +182,14 @@ package {
         this.scaleX = 1;
       }
 
-      if (!this.moving || this.turning) {
+      if (!this.diving && !this.sliding && (!this.moving || this.turning)) {
         if (this.grounded) {
           this.vel.x *= (avx > 100) ? this.groundFriction : 0;
         } else {
           this.vel.mulSelf(this.airFriction);
         }
+      } else if (this.sliding) {
+        this.vel.x *= 0.95;
       }
 
       if (this.grabbingWall &&
