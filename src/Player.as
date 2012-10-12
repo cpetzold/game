@@ -17,7 +17,9 @@ package {
 
     public var walkSpeed:Number;
     public var runSpeed:Number;
-    public var turnDamp:Number;
+
+    public var groundFriction:Number;
+    public var airFriction:Vec2;
 
     public var jumpForce:Number;
     public var jumpSpeed:Number;
@@ -58,12 +60,13 @@ package {
       this.addAnimations();
 
       this.grav = new Vec2(0, 2000);
-      this.damp = new Vec2(1, 1);
       this.hit = new Rectangle(24, 32, 16, 28);
 
-      this.walkSpeed = 620;
+      this.walkSpeed = 800;
       this.runSpeed = 820;
-      this.turnDamp = 0.8;
+
+      this.groundFriction = 0.9;
+      this.airFriction = new Vec2(0.8, 1);
 
       this.jumpForce = 380;
       this.jumpSpeed = 100;
@@ -179,8 +182,12 @@ package {
         this.scaleX = 1;
       }
 
-      if (this.grounded && (!this.moving || this.turning)) {
-        this.vel.x *= (avx > 30) ? this.turnDamp : 0;
+      if (!this.moving || this.turning) {
+        if (this.grounded) {
+          this.vel.x *= (avx > 100) ? this.groundFriction : 0;
+        } else {
+          this.vel.mulSelf(this.airFriction);
+        }
       }
 
       if (this.grabbingWall &&
@@ -204,7 +211,6 @@ package {
       // Animations
       if (this.grounded) {
         if (this.sliding && avx > 50) {
-          this.turnDamp = 0.93;
           this.playAnimationAtFPS('slide', 13);
         } else if (this.landing) {
           this.playAnimationAtFPS('land', 15);
@@ -212,31 +218,24 @@ package {
           if (!this.moving || this.turning) {
             if (avx > 120) {
               this.playAnimationAtFPS('turn', 20);
-              this.turnDamp = 0.8;
             } else if (avx < 30) {
               this.playAnimationAtFPS('idle', 13);
-              this.turnDamp = 0.8;
             } else if (avx < 70) {
               this.playAnimationAtFPS('walk', 3);
-              this.turnDamp = 0.8;
             }
           } else if (avx > 300) {
             this.playAnimationAtFPS('run', 30);
-            this.turnDamp = 0.8;
           } else {
             if (avx < 70) {
               if (avx < 40) {
                 this.playAnimationAtFPS('walk', 40);
-                this.turnDamp = 0.8;
               }
             } else {
               this.playAnimationAtFPS('walk', 20);
-              this.turnDamp = 0.8;
             }
           }
         } else {
           this.playAnimationAtFPS('idle', 13);
-          this.turnDamp = 0.8;
         }
       } else {
         if (this.grabbingWall) {

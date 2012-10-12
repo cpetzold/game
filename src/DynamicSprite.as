@@ -22,9 +22,8 @@ package {
     public var grav:Vec2; // Gravity/wind vector
     public var vel:Vec2; // Velocity vector
     public var maxVel:Vec2;
-    public var damp:Vec2; // Damping vector
 
-    public var grounded:Boolean; // True when on the ground
+    public var grounded:Boolean;
 
     public function DynamicSprite(texture:Texture2D = null) {
       super(texture);
@@ -35,7 +34,6 @@ package {
       this.grav = new Vec2();
       this.vel = new Vec2();
       this.maxVel = new Vec2(1000, 800);
-      this.damp = new Vec2(0.97, 9.97);
 
       this.grounded = false;
     }
@@ -82,8 +80,6 @@ package {
       if (Math.abs(this.vel.y) > this.maxVel.y) {
         this.vel.y = this.movingUp ? -this.maxVel.y : this.maxVel.y;
       }
-
-      this.vel.mulSelf(this.damp);
 
       this.x += this.vel.x * dt;
       if (this.map) {
