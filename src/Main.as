@@ -16,7 +16,7 @@ package {
   import de.nulldesign.nd2d.display.World2D;
   import de.nulldesign.nd2d.display.Scene2D;
 
-  [SWF(width="1024", height="640", frameRate="60", backgroundColor="#333333")]
+  [SWF(width="1024", height="640", frameRate="60", backgroundColor="#1885E1")]
   public class Main extends World2D {
 
     protected var current:Game;

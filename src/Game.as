@@ -33,6 +33,7 @@ package {
 
       this.tmx = new TmxMap(mapXML);
       this.map = new Map(this);
+      this.backgroundColor = 0x1885E1;
     }
 
     override protected function step(dt:Number):void {
