@@ -59,22 +59,22 @@ package {
 
       this.addAnimations();
 
-      this.grav = new Vec2(0, 2000);
+      this.grav = new Vec2(0, 2300);
       this.hit = new Rectangle(24, 32, 16, 28);
 
-      this.walkSpeed = 800;
-      this.runSpeed = 820;
+      this.walkSpeed = 650;
+      this.runSpeed = 750;
 
-      this.groundFriction = 0.9;
+      this.groundFriction = 0.83;
       this.airFriction = new Vec2(0.8, 1);
 
-      this.jumpForce = 380;
+      this.jumpForce = 460;
       this.jumpSpeed = 100;
       this.jumpWallSpeed = 150;
       this.jumpDamp = 1;
       this.jumpDampRate = 0.8;
 
-      this.wallJumpForce = new Vec2(450, -380);
+      this.wallJumpForce = new Vec2(300, -460);
       this.wallJumpSpeed = 100;
       this.wallJumpDamp = 1;
       this.wallJumpDampRate = 0.8;
@@ -95,7 +95,7 @@ package {
       this.grabLeft = false;
       this.grabRight = false;
       this.grabLocked = false;
-      this.grabTimer = new Timer(100, 1);
+      this.grabTimer = new Timer(120, 1);
       this.grabTimer.addEventListener('timer', this.grabRelease);
 
       this.landTimer = new Timer(100, 1);
@@ -226,7 +226,7 @@ package {
               this.playAnimationAtFPS('walk', 3);
             }
           } else if (avx > 300) {
-            this.playAnimationAtFPS('run', 30);
+            this.playAnimationAtFPS('run', 20);
           } else {
             if (avx < 70) {
               if (avx < 40) {

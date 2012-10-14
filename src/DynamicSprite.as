@@ -33,7 +33,7 @@ package {
       this.acc = new Vec2();
       this.grav = new Vec2();
       this.vel = new Vec2();
-      this.maxVel = new Vec2(1000, 800);
+      this.maxVel = new Vec2(800, 800);
 
       this.grounded = false;
     }

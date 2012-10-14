@@ -8,12 +8,12 @@
  </tileset>
  <layer name="tiles" width="200" height="24">
   <data encoding="base64" compression="zlib">
-   eJztw7EJAAAIA7Ai+P/LXtDFOYEkAAAAAAAAAAAAAAAAAAAAAAA/o9ar1gfEMwV5
+   eJztnNsKwjAQROOFSv//h8UHQUK67OTS3bFzYB8EY8dNjrRpcSulbKpLlzjmjP48TzjGKpize5AfNvLDhjm7B/lhIz9smLN7kB82Z8w/8xpjzu5BfthE+/GZn4ejoqizf16/qmJGfthk8GNk/GpafjBT/x7JDxv5gR37H/wQfuQHBprl+zu9l9jzxC/yA0N+YGTK0oP8wJAfGJmy9CA/MOQHRqYsPcgPjDPme/+pGq8f94P6xbNP3LoG8I57lHa/MuxDe5EfGNH9Gjl+PdbzWa33IBlm9mvGvR50fPR8sxHdryv7MQM0T7b82Ynul/wYA83DcA6Yiej5ZvMjG0h2lmukTESvjejjXwW50cfK9enZD5If65Eb/axcn+z3Clr09CuyD0x7zxmRHxhMfsiLcXR+g8HSL7kxB5b5zgJDv+TGPG4Ly3ouZHUhz4wgtfJ/dmZ+BzGHNxPcB9w=
   </data>
  </layer>
  <layer name="collisions" width="200" height="24" opacity="0.34">
   <data encoding="base64" compression="zlib">
-   eJzt07EJAAAIBLGv3X9gsRYsrBO4ES4BAAAAAAAAAAAAAAAAAAAAAPgpSWfANm80GzMH5Q==
+   eJztmssSgyAQBD37/x+ceyqafQC7A91V3DQMY9pSyvu6rptx9IBnVvSjfA2Us1vYfX1Z8OMd5ewWdl9fFvx4Rzm7hd3XlwU/3lHObmH39WWp9qP7O+T33J2yjUA9/2w6+JE5fza//FBmN79ngx++udX/T+r5V4MfPrxZut2rO2RQAj98dMoSQT3/avDDR6csEdTzrwY/fHTKEkE9/2pW+fH0/G31w7LvG90rzn6v1On94h8KGTtR3Vdm/sjeUtTRyLGW38rut3rPr77ealT3dbIfI4j4BHaq+8KPHPgxl+q+1Pzohtdt5bVWUN1X9fyngBsxZnYW3Q+CsdBznNl+7EZkTZU9cB/KgR8+lPzAizz050OlL9wYAx36UOgLN8bh/baCoTFgDB9M3BGV
   </data>
  </layer>
  <objectgroup name="objects" width="200" height="24">
